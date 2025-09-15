@@ -45,7 +45,32 @@ const devolverMarcaArray = (arrayPrenda :Prenda []) : Marca => {
 
 
 //Ejercicio 2
-//Hacer un array de numeros y devolver un array con los multiplos de 2 y de 5
+//Hacer un array de numeros y devolver un array con los multiplos de 2 y de 5 FILTER
 const arrayNumeros : number[] = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
 const arrayMultiplos : number [] = arrayNumeros.filter((num ) => num %2=== 0 && num %5 ===0);
-console.log(arrayMultiplos);
+//console.log(arrayMultiplos);
+
+
+//Ejercicio 3
+//Hacer un array de numeros y devolver un array con los multiplos de 2 y de 5 FIND(Muestra el primer valor)
+const arrayFind: number | undefined= arrayNumeros.find((num) => { 
+    if (num % 2  ===0 && num % 5 ===0){
+        return true;
+    }
+    else{
+        return false;
+    }
+});
+//console.log(arrayFind);
+
+
+//Ejercicio 4
+//Hacer un array de numeros y devolver un array con los multiplos de 2 y de 5 SOME(Muestra true o false)
+const arraySome : boolean = arrayNumeros.some((num) => num %2 ===0 && num %5 ===0);
+//console.log(arraySome);
+
+
+//Ejercicio 5
+//Hacer un array de numeros y devolver un array con los multiplos de 2 y de 5 EVERY(Muestra true o false si todos los valores cumplen la condicion)
+const arrayEvery : boolean = arrayNumeros.every((num) => num %2 ===0 && num %5 ===0);
+console.log(arrayEvery);
