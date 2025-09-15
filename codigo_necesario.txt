@@ -1,0 +1,2 @@
+1º- npx ts-node Teoria/1ºSemana/Conceptos/2º_Semana.ts //Para correr el archivo desde el btn run
+2º- Ctrl S (Guardarlo para que ejecute el codigo nuevo)
