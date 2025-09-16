@@ -34,10 +34,23 @@ interface nombreInterfaz {
     nombreFuncion(4,"gallina")
 
 //Funciones Array
-const arrFun : number [] = []
-    //ForEach
-    arrFun.forEach(numero => {console.log(numero);
-    }); 
-    //Filter
-    const arrFunFil = arrFun.filter(numero => numero > 5);
-    
+// Funciones Array
+const arrPrueba: number[] = [2, 6, 8, 3, 1, 10];
+
+// ForEach en forma larga con if
+arrPrueba.forEach((numero) => {
+    if (true) { // aquí el if no filtra nada, solo envuelve la acción
+        console.log(numero);
+    }
+});
+
+// Filter en forma larga con if
+const arrFunFil = arrPrueba.filter((numero) => {
+    if (numero > 5) {
+        return true;  // se queda en el nuevo array
+    } else {
+        return false; // no se queda
+    }
+});
+
+console.log("Filtrados:", arrFunFil);
