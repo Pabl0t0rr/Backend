@@ -56,16 +56,24 @@ const todosMayoresQue0: boolean = arrayPrueba.every(num => {
 // Resultado: true
 
 
-// .reduce() → devuelve un único valor, que se va creando a partir de cada valor del array + inicialValue
-const inicialValue : number = 0;
-const sumaDesdeInicial = arrayPrueba.reduce((acumulador : number, valorActual : number) => {
-    return acumulador + valorActual;
-}, inicialValue);
-//Resultado 15
+// .reduce() → reduce el array a un único valor
+const sumaTotal: number = arrayPrueba.reduce((acumulador, valorActual) => {
+    let resultado = acumulador; 
+    // en cada paso sumamos el valor actual al acumulador
+    if (true) {  // aquí no hay condición, siempre se aplica
+        resultado = acumulador + valorActual;
+    }
+    return resultado;  // se convierte en el nuevo acumulador
+}, 0);  // valor inicial del acumulador = 0
+// Resultado: 15
+// (0+1=1 → 1+2=3 → 3+3=6 → 6+4=10 → 10+5=15)
 
-// ... Se usan para decostruir los arrays y objetos
-const arrayNumerosParesDecostruir : number[] = [2,4,6];
-const arrayNumerosImparesDecostruir : number[] = [1,3,5];
 
-const numerosTodosTipos : number[] = [...arrayNumerosParesDecostruir, ...arrayNumerosImparesDecostruir];
-// Resultado: [2,4,6,1,3,5]
+// Spread (...) → expande los elementos de arrays u objetos
+
+const arrayPares: number[] = [2, 4, 6];
+const arrayImpares: number[] = [1, 3, 5];
+
+// Unimos los dos arrays en uno solo
+const todosLosNumeros: number[] = [...arrayPares, ...arrayImpares];
+// Resultado: [2, 4, 6, 1, 3, 5]
