@@ -23,7 +23,7 @@ const arrayPrendas: Prenda[] = [
 const devolverMarcaArray = (arrayPrenda: Prenda[]): Marca[] => {
     return arrayPrenda.map(prenda => prenda.marca);
 };
- //console.log(devolverMarcaArray(arrayPrendas));
+console.log(devolverMarcaArray(arrayPrendas));
 
 
 // Ejercicio 2, 3, 4, 5 
@@ -47,7 +47,7 @@ const arraySome: boolean = arrayNumeros.some(num => num % 2 === 0 && num % 5 ===
 
 // Every
 const arrayEvery: boolean = arrayNumeros.every(num => num % 2 === 0 && num % 5 === 0);
-console.log(arrayEvery);
+//console.log(arrayEvery);
 
 
 // Ejercicio 6 
@@ -100,4 +100,4 @@ const filtrados   = arrayClientes.reduce((acumulador : Resultado, valorActual : 
     return acumulador;
 
 },inicialValueResultado);
-console.log(filtrados);
+//console.log(filtrados);

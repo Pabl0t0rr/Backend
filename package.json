@@ -7,7 +7,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "ts-node index.ts",
     "dev": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm index.ts\"",
-    "dev:test": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm Teoria/3ºSemana/Lunes/3ºSemana.ts\""
+    "dev:Semana1": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm Teoria/1ºSemana/1ºSemana.ts\"",
+    "dev:Semana2": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm Teoria/2ºSemana/2ºSemanaEJ.ts\"",
+    "dev:Semana3": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm Teoria/3ºSemana/Martes/3ºSemana.ts\"",
+    "dev:Semana4": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm Teoria/4ºSemana/Lunes/4ºSemana.ts\""
   },
   "repository": {
     "type": "git",
