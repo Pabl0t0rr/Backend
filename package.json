@@ -11,7 +11,7 @@
     "dev:Semana2": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm Teoria/2ºSemana/2ºSemanaEJ.ts\"",
     "dev:Semana3": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm Teoria/3ºSemana/Martes/3ºSemana.ts\"",
     "dev:Semana4": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm Teoria/4ºSemana/Lunes/4ºSemana.ts\"",
-    "dev:Prueba": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm Teoria/3ºSemana/Martes/3ºSemana_Prueba.ts\""
+    "dev:Prueba": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm Teoria/3ºSemana/Martes/Fernando_help.ts\""
   },
   "repository": {
     "type": "git",
