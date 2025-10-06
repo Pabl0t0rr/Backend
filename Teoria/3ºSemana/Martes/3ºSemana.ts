@@ -22,16 +22,16 @@ type Personaje = {
 //De esos personajes queremos sacar los episodios en los que han salido y en los episodios en los que aparecen salgan los personajes que participaron
 
 //Funcion
-const getValues = (name : string, status : string, gender : string) => {
+const getValues = (name? : string, status? : string, gender? : string) => { //? significa que el valor se puede omitir
     const URL = ["https://rickandmortyapi.com/api/character/?"];
     const URLCompleta = URL.reduce((acumulador, urlActual) => {
-        if (name !== "") {
+        if (name) {
             urlActual += `name=${name}&`;
         }
-        if (status !== "") {
+        if (status) {
             urlActual += `status=${status}&`;
         }
-        if (gender !== "") {
+        if (gender) {
             urlActual += `gender=${gender}&`;
         }
         return acumulador + urlActual;
