@@ -10,7 +10,8 @@ const getCharacterName = async (id : number []) => {
         });    
 
     const response = await Promise.all(promesa);
-    console.log(response);
+    return response;
+    //console.log(response);
 
     }catch(err){ //Para manejar cualquier error
         if(axios.isAxiosError(err)){
@@ -22,4 +23,5 @@ const getCharacterName = async (id : number []) => {
 
 };
 
-getCharacterName([1,2,3,4,5]);
+const nombrePersonajes = await getCharacterName([1,2,3,4,5]);
+console.log(nombrePersonajes);
