@@ -57,3 +57,25 @@ const getMultipleId = async (ids :number[]) => {
 }
 
 console.log(getMultipleId([1,2,3]));
+
+
+//allSettle (promised.all(), pero con opcion de errores)
+
+const getMultipleIdSettle = async (ids :number[]) => {
+    const promesa = ids.map(async (elem) => {
+        const arrayPromesas = (await axios.get("https://rickandmortyapi.com/api/character/" + elem)).data;
+        return arrayPromesas;
+    });
+
+    const response = await Promise.allSettled(promesa);
+    response.forEach((elem) => {
+        if(elem.status == "fulfilled"){
+            console.log(elem.value);
+        }else{
+            console.log(elem.status, " Error")
+        }
+    });
+    console.log(response);
+}
+
+console.log(getMultipleId([1,2,3]));
