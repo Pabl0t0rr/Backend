@@ -75,7 +75,9 @@ const getMultipleIdSettle = async (ids :number[]) => {
             console.log(elem.status, " Error")
         }
     });
-    console.log(response);
+    return response;
 }
 
-console.log(getMultipleId([1,2,3]));
+const variableCompleta = await getMultipleIdSettle([1,2,3000]);
+console.log(variableCompleta);
+
