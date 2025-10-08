@@ -10,7 +10,7 @@
     "dev:Semana1": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm Teoria/1ºSemana/1ºSemana.ts\"",
     "dev:Semana2": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm Teoria/2ºSemana/2ºSemanaEJ.ts\"",
     "dev:Semana3": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm Teoria/3ºSemana/Martes/3ºSemana.ts\"",
-    "dev:Semana4": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm Teoria/4ºSemana/Lunes/4ºSemana.ts\"",
+    "dev:Semana4": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm Teoria/4ºSemana/Martes/4ºSemana.ts\"",
     "dev:Prueba": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm Teoria/4ºSemana/Lunes/4ºSemanaEJ.ts\""
   },
   "repository": {
