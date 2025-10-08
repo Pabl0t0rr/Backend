@@ -35,9 +35,6 @@ type Character = {
 
 //Crear una funcion getEpisodeFromCharacter = asyn(id : number) y enviarlo cnd se tenga el promise.all
 
-//Finalizar
-
-
 const getEpisodeFromCharacter = (async (id? : number) => {
     try {
         const characters = (await axios.get<Character>(`https://rickandmortyapi.com/api/character/${id}`)).data; //Obtenemos la direccion del personaje con todos sus datos
@@ -77,7 +74,6 @@ const getEpisodeFromCharacter = (async (id? : number) => {
 
 const variableCompleta = await getEpisodeFromCharacter(1);
 console.log(variableCompleta);
-// console.log(JSON.stringify(variableCompleta, null, 2)) // Para ver el contenido de los objetos
 
 //Crear una funcion getEpisodeFromCharacter = asyn(id : number) y enviarlo cnd se tenga el promise.all
 
