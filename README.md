@@ -26,6 +26,7 @@ Este proyecto sirve como espacio centralizado para almacenar:
 Estructura principal del repositorio:
 E
 ```bash
+├── Ejercicio_Repaso/     ← Contenido para mejorar en diversos aspectos
 ├── Practicas/            ← Contenido de las practicas de la asignatura
 ├── Teoria/               ← Contenido clase (Apuntes, Ejericios)
 ├── index.ts             
