@@ -24,7 +24,7 @@ Este proyecto sirve como espacio centralizado para almacenar:
 - Ficheros auxiliares como `.gitignore`  
 
 Estructura principal del repositorio:
-E
+
 ```bash
 ├── Ejercicio_Repaso/     ← Contenido para mejorar en diversos aspectos
 ├── Practicas/            ← Contenido de las practicas de la asignatura
@@ -65,10 +65,10 @@ Aunque el repositorio no está enfocado en una aplicación concreta (como un ser
    ```bash
    npm install
    ```
-4. Ejecuta el proyecto (según lo que haya en index.ts):
+4. Ejecuta el proyecto:
 
    ```bash
-   npm run dev     ← Cambiar la terminacion "dev" para la ruta requerida delos scripts
+   npm run dev     ← Cambiar la terminacion "dev" para la ruta requerida de los scripts
    ```
    ---
    
