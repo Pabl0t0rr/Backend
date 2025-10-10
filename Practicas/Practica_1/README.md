@@ -28,7 +28,7 @@ Utilizaremos esta API que proporciona recursos falsos para pruebas.
 Escribe una función recursiva llamada `factorialRecursivo` que tome un número entero no negativo como argumento y devuelva su factorial.  
 No puedes utilizar bucles (`for`, `while`).
 
-```
+```TypeScript
 function factorialRecursivo(n: number): number {
   // Tu código aquí
 }
@@ -44,7 +44,7 @@ Escribe una función llamada `agruparPeliculasPorGenero` que tome un array de ob
 (con propiedades como `id`, `title`, `genre_ids`) y devuelva un objeto donde las claves sean los IDs de género  
 y los valores sean arrays de títulos de películas pertenecientes a ese género.
 
-```
+```TypeScript
 interface Pelicula {
   id: number;
   title: string;
@@ -76,7 +76,7 @@ Escribe una función asíncrona llamada `obtenerTitulosDePosts` que realice las 
 3. Extrae el título (`title`) de cada post en el array resultante.  
 4. Devuelve un array con los títulos extraídos.
 
-```
+```TypeScript
 async function obtenerTitulosDePosts(): Promise<string[]> {
   // Tu código aquí
 }
@@ -117,14 +117,14 @@ ejecutarObtenerTitulos();
 Sigue estos pasos para crear una Pull Request:
 
     Crea la rama feature/practica-1:
-```
+```bash
 git checkout -b feature/practica-1 develop
 ```
 - Realiza tus cambios y commitea tu código
 - Escribe el código para los ejercicios en la rama feature/practica-1.
 - Commitea tus cambios con mensajes descriptivos
 
-```
+```bash
 git add .
 git commit -m "Implementación de Ejercicio 1"
 git add .
@@ -134,7 +134,7 @@ git commit -m "Implementación de Ejercicio 3"
 ```
 - Sube la rama feature/practica-1 a GitHub
 
-```
+```bash
 git push origin feature/practica-1
 ```
 - Crea una Pull Request (PR)
