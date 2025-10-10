@@ -116,7 +116,8 @@ ejecutarObtenerTitulos();
 
 Sigue estos pasos para crear una Pull Request:
 
-    Crea la rama feature/practica-1:
+Crea la rama feature/practica-1:
+
 ```bash
 git checkout -b feature/practica-1 develop
 ```
