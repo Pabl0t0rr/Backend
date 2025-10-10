@@ -131,8 +131,3 @@ Combinación de métodos:
 Dado un array de productos { nombre, precio, disponible }, filtra los que estén disponibles,mapea para quedarte con los nombres,y ordénalos alfabéticamente.
 
 */
-
-const agruparEdades = objeto.reduce((acc, valorActual) => {
-
-    return acc;
-});
