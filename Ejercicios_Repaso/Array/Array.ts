@@ -131,3 +131,63 @@ Combinación de métodos:
 Dado un array de productos { nombre, precio, disponible }, filtra los que estén disponibles,mapea para quedarte con los nombres,y ordénalos alfabéticamente.
 
 */
+
+const persona = [
+    {nombre : "Pablo" , edad : 18},
+    {nombre : "Lucas" , edad : 18},
+    {nombre : "Juan" , edad : 23},
+    {nombre : "Miguel" , edad : 34},
+    {nombre : "Jose" , edad : 18},
+    {nombre : "David" , edad : 45}
+];
+
+const arrFrases = ["Hola", "me", "llamo", "Pablo", "y", "tengo", "18", "años"];
+
+const arrProductos = [
+                    {nombre : "Aceitunas", precio: 100, disponible: true},
+                    {nombre : "Bacalao", precio: 200, disponible: false},
+                    {nombre : "Castañas", precio: 300, disponible: true},
+                    {nombre : "Dedal", precio: 400, disponible: true},
+                    {nombre : "Elfo", precio: 500, disponible: false}
+];
+
+const agruparPorEdad = persona.reduce((acc, valorActual) => {
+    const edad = valorActual.edad;
+    if (!acc[edad]) {
+        acc[edad] = [];
+    }
+    acc[edad].push(valorActual);
+    return acc;
+}, {} as {[key: number]: {nombre: string, edad: number}[]});
+//console.log(agruparPorEdad);
+
+const arrPalabras = ["hola", "hola", "adios", "Juanjose", "hola", "Adios"];
+const contarOcurrencias = arrPalabras.reduce((acc, valorActual) => {
+    const palabra = valorActual.toLowerCase();
+    if (!acc[palabra]){
+        acc[palabra] = 0;
+    }
+        acc[palabra] += 1
+    return acc;
+}, {} as {[key: string]: number});
+//console.log(contarOcurrencias);
+
+const encontrarMasJoven = persona.reduce((acc, valorActual) => {
+    if (acc.length === 0 || valorActual.edad < acc[0]!.edad) { //Poner ! para decirle a TS que confie en mi(no va a ver valores nulos/undefined)
+        return [valorActual];
+    } else if (valorActual.edad === acc[0]!.edad) { //Poner ! para decirle a TS que confie en mi(no va a ver valores nulos/undefined)
+        return [...acc, valorActual];
+    }
+    return acc;
+}, [] as {nombre: string, edad: number}[]);
+//console.log(encontrarMasJoven);
+
+const concatenarFrases = arrFrases.reduce((acc, valorActual) => {
+    return acc + " " + valorActual;
+},"")
+//console.log(concatenarFrases);
+
+const combinacionMetodos = arrProductos.filter(elem => elem.disponible === true)
+                                       .map(elem => elem.nombre)
+                                       .sort(); //.sort para ordenador alfabeticamente los resultados
+//console.log(combinacionMetodos);
