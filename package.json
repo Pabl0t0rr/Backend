@@ -13,7 +13,7 @@
     "dev:Semana4": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm Teoria/4ºSemana/Martes/4ºSemana.ts\"",
     "dev:Prueba": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm Teoria/4ºSemana/Lunes/4ºSemanaEJ.ts\"",
     "dev:Practicas": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm Practicas/Practica1/Practica1.ts\"",
-    "dev:EjRep": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm Ejercicios_Repaso/Array/Array.ts \""
+    "dev:EjRep": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm Ejercicios_Repaso/APIS/APIS.ts \""
   },
   "repository": {
     "type": "git",
