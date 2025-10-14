@@ -6,9 +6,6 @@ import express, {
 
 import cors from "cors";
 import axios from "axios";
-import { title } from "process";
-import { url } from "inspector";
-import { connect } from "http2";
 
 // Types
 type Team = {
