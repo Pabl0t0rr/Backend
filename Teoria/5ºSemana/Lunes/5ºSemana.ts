@@ -1,111 +1,185 @@
 // Biblioteca express para crear el servidor
-import express from 'express';
-import cors from 'cors';
 
-/*
-Tipos API
-get()-> dar info
-post() -> crear info
-put() -> actualiza info
-delete() -> borrar info
-*/
+import express, {
+  type NextFunction,
+  type Request,
+  type Response,
+} from "express";
+import cors from "cors";
 
+
+// Tipos
 type Calle = {
-    numero : number,
-    streetName : string,
-    floor : number
+  numero: number;
+  streetName: string;
+  floor: number;
 };
 
-type Persona = {
-    id : string, 
-    name: string,
-    email: string,
-    calle : Calle
+type Person = {
+  id: string;
+  name: string;
+  email: string;
+  address: Calle;
 };
 
-let personas  : Persona [] = [
-    {
-    id : "1",
-    name : "Pablo",
-    email: "prueba@gmail.com",
-    calle : {
-        floor : 1,
-        numero : 11,
-        streetName : "Calle de prueba"
-    }
+// "Base de datos" simulada
+let personicas: Person[] = [
+  {
+    id: "1",
+    name: "Paco",
+    email: "pacoPe@pepe.com",
+    address: {
+      floor: 1,
+      numero: 155,
+      streetName: "Capitan Haya",
     },
-    {
-    id : "2",
-    name : "Juan",
-    email: "prueba@gmail.com",
-    calle : {
-        floor : 2,
-        numero : 22,
-        streetName : "Calle de prueba"
-    }
-    }
-]
+  },
+  {
+    id: "2",
+    name: "Pepa",
+    email: "pepaPe@gmail.com",
+    address: {
+      floor: 3,
+      numero: 155,
+      streetName: "Capitan Haya",
+    },
+  },
+];
 
-
-const appServer = express();
+const app = express();
 const port = 3000;
 
-//Para ejecutarlo
-//localhost+port (Navegador)
-//Definir lo que usaremos en el programa
-appServer.use(cors());
-appServer.use(express.json())
+app.use(cors());
+app.use(express.json());
 
-//GET
+// --- Función de validación ---
+const validatePersonData = (data: any): string | null => {
+  if (!data) return "No se ha proporcionado ningún cuerpo de solicitud.";
 
-//Definimos la llamada (se puede poner las rutas disponibles de la API)
-appServer.get("/", (req, res) => {
-    res.send("Te has conectado")
+  const { name, email, address } = data;
+
+  if (typeof name !== "string" || name.trim().length < 2)
+    return "El nombre debe ser una cadena con al menos 2 caracteres.";
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (typeof email !== "string" || !emailRegex.test(email))
+    return "El correo electrónico no es válido.";
+
+  if (
+    !address ||
+    typeof address.numero !== "number" ||
+    typeof address.floor !== "number" ||
+    typeof address.streetName !== "string"
+  ) {
+    return "La dirección debe incluir número (number), floor (number) y streetName (string).";
+  }
+
+  return null;
+};
+
+// --- Middleware de error genérico ---
+const errorHandler = (
+  err: Error,
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  console.error("Error detectado:", err.message);
+  res
+    .status(500)
+    .json({ error: "Error interno del servidor", detail: err.message });
+};
+
+// --- Rutas ---
+app.get("/", (req: Request, res: Response) => {
+  res.send("✅ Okey makei, te has conectado correctamente.");
 });
 
-//Definimos ruta de las personas
-appServer.get("/personas", (req, res) => {
-    res.json(personas);
+app.get("/persons", (req: Request, res: Response) => {
+  res.json(personicas);
 });
 
-//POST
-appServer.post("/personas", (req, res) => { //Cnd lo mandamos en postman hay que decirle que use el raw fromato JSON
+app.get("/person/:id", (req: Request, res: Response) => {
+  const { id } = req.params;
+  const person = personicas.find((p) => p.id === id);
 
-    const nameNewUser = req.body.name;
-    if(nameNewUser){ //Comprobaciones de todas las variables que tiene nuestro tipo(error mandar al error 404)
+  return person
+    ? res.json(person)
+    : res.status(404).json({ error: "Persona no encontrada" });
+});
 
-    }
-    const newUser : Persona = {
-        id : Date.now().toString(),
-        ...req.body
+app.post("/person", (req: Request, res: Response) => {
+  try {
+    const error = validatePersonData(req.body);
+    if (error) return res.status(400).json({ error });
+
+    const newUser: Person = {
+      id: Date.now().toString(),
+      ...req.body,
     };
-    personas.push(newUser); //Lo añadimos
+
+    personicas.push(newUser);
     res.status(201).json(newUser);
-    //res.status(404).send("Mal tipado")
+  } catch (err: any) {
+    res
+      .status(500)
+      .json({ error: "Error al crear la persona", detail: err.message });
+  }
 });
 
-//PUT
-appServer.put("/personas/:id", (req, res)=>{
-    const id = req.params.id; //Siempre sera un string lo que se pasa por parametros
-    const personasNuevas = personas.map((persona) => { //Recorremos el array y si coincide el id lo actualizamos
-        return persona.id === id ? {...persona, ...req.body} : persona;
+app.put("/person/:id", (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const index = personicas.findIndex((p) => p.id === id);
+
+    if (index === -1)
+      return res.status(404).json({ error: "Persona no encontrada" });
+
+    const error = validatePersonData(req.body);
+    if (error) return res.status(400).json({ error });
+
+    personicas[index] = { ...personicas[index], ...req.body };
+
+    res.json({
+      message: "Persona actualizada correctamente",
+      person: personicas[index],
     });
-    personas = personasNuevas;
-    res.json({message: "Personas actualizadas"});
+  } catch (err: any) {
+    res
+      .status(500)
+      .json({ error: "Error al actualizar la persona", detail: err.message });
+  }
 });
 
-//DELETE
-appServer.delete("/personas/:id", (req, res) => {
-    const id = req.params.id;
-    const personasSinEliminada = personas.filter(p => ! (p.id === id));
-    personas = personasSinEliminada;
-    res.json({message : "Persona eliminada"});
+app.delete("/person/:id", (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const exists = personicas.some((p) => p.id === id);
+
+    if (!exists)
+      return res.status(404).json({ error: "Persona no encontrada" });
+
+    personicas = personicas.filter((p) => p.id !== id);
+
+    res.json({ message: "Persona eliminada correctamente" });
+  } catch (err: any) {
+    res
+      .status(500)
+      .json({ error: "Error al eliminar la persona", detail: err.message });
+  }
 });
 
-//Para ejecutarlo
-appServer.listen(port, () => {
-    console.log("Server started at : " + port);
+// Middleware final (ruta no encontrada)
+app.use((req: Request, res: Response) => {
+  res.status(404).json({ error: "Ruta no encontrada" });
+});
 
+// Middleware de error
+app.use(errorHandler);
+
+// --- Inicio del servidor ---
+app.listen(port, () => {
+  console.log(`🚀 Server started at http://localhost:${port}`);
 });
 
 
