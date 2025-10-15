@@ -1,268 +1,90 @@
-import axios  from "axios";
+//Bibliotecas para crear servidor
+import express, {
+type Request, 
+type Response,
+type NextFunction
+} from "express";
+import cors from "cors";
 
-type Episode = {
-    id : number;
-    name : string;
-    air_date : string;
-    episode : string;
-    characters : string[]; // En la API real, characters es un array de URLs (strings)
-    url: string;
-    created : string;
-};
-
+//Creacion de tipos para alamacenar la info
 type Character = {
-    id : number;
-    name : string;
-    status : string;
-    species : string;
-    type : string;
-    gender : string;
-    origin: {
-        name: string;
-        url: string;
-    };
-    location: {
-        name: string;
-        url: string;
-    };
-    image : string;
-    episode : string[]; // En la API real, episode es un array de URLs (strings)
-    url: string;
-    created : string;
+    id : number,
+    name : string,
+    age : number,
+    gender : string
+};
+
+type Animal = {
+    id: number,
+    name: string,
+    species: string,
+    age: number,
+    ownerInfo?: Character | undefined //  ownerInfo puede contener la info del owner o ser undefined
 }
 
-const urlCharacter = "https://rickandmortyapi.com/api/character/";
-const urlEpisodes = "https://rickandmortyapi.com/api/episode/";
+let characters : Character[] = [
+    {id: 1, name : "Juan", age : 70, gender : "Male"},
+    {id: 2, name : "Miguel", age : 14, gender : "Male"}
+];
 
-/*
-🟢 Nivel 1: Básico — Fetch y visualización
+let animals: Animal[] = [
+    { id: 1, name: "Snuffles", species: "Dog", age: 5, ownerInfo: characters[1] },
+    { id: 2, name: "Birdperson", species: "Bird", age: 40, ownerInfo: characters[0] },
+    { id: 3, name: "Squanchy", species: "Cat", age: 8 }
+];
 
-Listar personajes:
-Crea un programa en TypeScript que obtenga la lista de personajes de la API de Rick and Morty y muestre por consola el nombre y el estado (Alive, Dead, unknown) de cada uno.
+//Codigo esencial
+const app = express();
+const port = 3000;
 
-Buscar por nombre:
-Pide al usuario (por consola o input HTML) un nombre y busca en la API los personajes que coincidan. Muestra los resultados con su imagen y especie.
+app.use(cors());
+app.use(express.json());
 
-Filtrar por estado:
-Haz una función buscarPorEstado(estado: string) que devuelva solo los personajes con ese estado.
-*/
+//RUTAS RAIZ
+app.get("/", (req, res) => { //Mostramos las posibles rutas para mas facilidad
+    res.json({
+            characters: "http://localhost:3000/characters",
+            animals: "http://localhost:3000/animals"
+    });
+});
 
-const lisarPersonajes = async () => {
+app.listen(port, () => {
+    console.log(`🚀 Server started at http://localhost:${port}`);
+})
+
+//RUTAS Para personajes
+//GET Listar todos los personajes
+app.get("/characters" , (req, res) => {
     try{
-        const response = (await axios.get(urlCharacter)).data;
-        const datosRequeridos = response.results.map((elem : Character) => {
-            return {name : elem.name,
-            status : elem.status    
-            }
-        });
-        const todasPromesas = await Promise.all(datosRequeridos);
-        return todasPromesas;
-
-    }catch (err){
-        if (axios.isAxiosError(err)) {
-            console.error("Error en la solicitud:", err.message);
-        } else {
-            console.error("Error inesperado:", err);
-        }
+        res.json(characters);
+    }catch(err : any){
+        res.status(500).json({error: "Error al buscar todos los personajes", details : err.message});
     }
-}
-const nlistaPersonajes = await lisarPersonajes();
-//console.log(nlistaPersonajes);
+})
 
-const buscarNombre = async (name? : string) => {
+//Get mostrar Personaje por ID
+app.get("/characters/:id", (req, res)=> {
     try{
-        let urlCompleta = urlCharacter;
-        if(name){
-            urlCompleta = urlCharacter + "?name=" + name + "&";
-        }
-        
-        //console.log(urlCompleta);
-        const response = (await axios.get(urlCompleta)).data.results;
-        const imagEspecie = response.map(async (elem : Character) => {
-            return {
-                name : elem.name, 
-                image : elem.image,
-                species : elem.species
-            }
-        })
-        
-        const namePromise = await Promise.all(imagEspecie);
-        return namePromise;
+        const id = Number(req.params.id);
+        const exist = characters.find((c) => c.id == id);
+        return exist ? res.json(exist) : res.status(500).json({error : "Persona no encontrada"});
+    }catch(err : any){
+        res.status(500).json({error: "Error al buscar una persona mediante un ID" , details : err.message});
+    } 
+})
 
-    }catch(err){
-        if(axios.isAxiosError(err)){
-            console.log("Axios error: " + err.message);
-        }else{
-            console.log("Unexpected error: "+ err);
-        }
-    }
-};
-const nombrePersonajeBuscado = await buscarNombre("Rick Sanchez")
-//console.log(nombrePersonajeBuscado);
-
-const filtraEstado = async (status ? : string) => {
+//Post crear un nuevo personaje teniendo en cuenta que le idque se le dara sera el siguiente disponible
+app.post("characters", (req, res) => {
     try{
-        let urlCompleta = urlCharacter;
-        if(status){
-            urlCompleta = urlCharacter + "?status="+ status + "&";
-        }
-        const response = (await axios.get(urlCompleta)).data.results;
-        const statusData = response.filter((elem : Character) => elem.status === status);
-
-        const statusPromise = await Promise.all(statusData);
-        return statusPromise;
-    }catch(err){
-        if(axios.isAxiosError(err)){
-            console.log("Axios error: "+ err.message);
-        }else{
-            console.log("Unexpected Error: " + err);
-        }
-    }
-};
-const nombresFiltrados = await filtraEstado("Alive");
-//console.log(nombresFiltrados);
-
-/*
-🟡 Nivel 2: Intermedio — Manejo de múltiples endpoints
-
-Detalles del personaje:
-Al seleccionar un personaje (por su id), haz otra llamada a la API para mostrar su información completa: nombre, género, especie, origen, y la cantidad de episodios donde aparece.
-
-Buscar episodios por nombre:
-Crea una función que busque episodios por nombre (por ejemplo, “Pilot”) y muestre la fecha de emisión y los personajes que aparecen.
-
-Combinar datos:
-Muestra una lista de personajes junto con el nombre del planeta (origin.name) de donde provienen. Si el planeta no tiene nombre, muestra “Desconocido”.
-*/
-
-const detallesPersonaje = async (id? : number) => {
-    try{
-        let urlCompleta = urlCharacter;
-        if(!id){
-            throw new Error("Introduzca un id para empezar la busqueda");
-        }else{
-            urlCompleta += + id;
-        }
-        const characterInfo = (await axios.get(urlCompleta)).data;
-        const contadorEpisodios =  characterInfo.episode.length;
-        return {
-            name : characterInfo.name,
-            gender : characterInfo.gender,
-            species : characterInfo.species,
-            origin : characterInfo.origin.name ? characterInfo.origin.name : "Desconocido",
-            episodeAppears : contadorEpisodios,
-            episodes : characterInfo.episode
+        const newCharacter : Character = {
+            id : characters.length + 1,
+            ...req.body,
         };
+        //Lo metemos dentro del arr original
+        characters.push(newCharacter);
+        res.status(201).json(newCharacter);
 
-    }catch(err){
-        if(axios.isAxiosError(err)){
-            console.log("Axios error: " + err.message);
-        }else{
-            console.log("Unexpected error: " + err);
-        }
+    }catch(err : any){
+        res.status(500).json({error: "Error al buscar una persona mediante un ID" , details : err.message});    
     }
-};
-const contadorInfoPersonajes = await detallesPersonaje(1);
-//console.log(contadorInfoPersonajes);
-
-const findEpisodeByName = async (episode : string) => {
-    try{
-        let urlCompleta = urlEpisodes;
-        if(!episode){
-            throw new Error("Falta introducir el nombre del episodio");
-        }else{
-            urlCompleta += "?name=" + episode;
-        }
-        const episodeInfo = (await axios.get(urlCompleta)).data.results;
-        return episodeInfo.map((ep : Episode) => ({
-            name : ep.name,
-            air_date : ep.air_date,
-            characters : ep.characters
-        }));
-
-    }catch(err){
-        if(axios.isAxiosError(err)){
-            console.log("Axios error: " + err.message);
-        }else{
-            console.log("Unexpected error: " + err);
-        }
-    }
-}
-const nombreEpisode = await findEpisodeByName("Pilot");
-//console.log(nombreEpisode);
-
-const personajesPlaneta = async () => {
-    try{
-        
-        const infoPersonajes = (await axios.get(urlCharacter)).data.results;
-        const filtradoPersonajes = infoPersonajes.map(async (elem : Character) => {
-            return ({
-                name: elem.name,
-                namePlanet : elem.origin.name ? elem.origin.name : "Desconocido"
-            });   
-        });
-
-        const returnPromise = await Promise.all(filtradoPersonajes);
-        return returnPromise;
-
-    }catch(err) {
-        if(axios.isAxiosError(err)){
-            console.log("Axios error" + err.message); 
-        }else{
-            console.log("Unexpected Error:" + err)
-        }
-    }
-}
-const listadoPersonas = await personajesPlaneta();
-console.log(listadoPersonas);
-
-/*
-🔵 Nivel 3: Avanzado — Async/Await, paginación y errores
-
-Paginación automática:
-Crea una función que recorra todas las páginas de personajes y devuelva un array con todos los resultados.
-
-Manejo de errores:🟢 Nivel 1: Básico — Fetch y visualización
-
-    Listar personajes:
-    Crea un programa en TypeScript que obtenga la lista de personajes de la API de Rick and Morty y muestre por consola el nombre y el estado (Alive, Dead, unknown) de cada uno.
-
-    Buscar por nombre:
-    Pide al usuario (por consola o input HTML) un nombre y busca en la API los personajes que coincidan. Muestra los resultados con su imagen y especie.
-
-    Filtrar por estado:
-    Haz una función buscarPorEstado(estado: string) que devuelva solo los personajes con ese estado.
-
-🟡 Nivel 2: Intermedio — Manejo de múltiples endpoints
-
-    Detalles del personaje:
-    Al seleccionar un personaje (por su id), haz otra llamada a la API para mostrar su información completa: nombre, género, especie, origen, y la cantidad de episodios donde aparece.
-
-    Buscar episodios por nombre:
-    Crea una función que busque episodios por nombre (por ejemplo, “Pilot”) y muestre la fecha de emisión y los personajes que aparecen.
-
-    Combinar datos:
-    Muestra una lista de personajes junto con el nombre del planeta (origin.name) de donde provienen. Si el planeta no tiene nombre, muestra “Desconocido”.
-
-🔵 Nivel 3: Avanzado — Async/Await, paginación y errores
-
-    Paginación automática:
-    Crea una función que recorra todas las páginas de personajes y devuelva un array con todos los resultados.
-
-    Manejo de errores:
-    Implementa un bloque try/catch que capture errores de red o búsquedas inválidas. Si no se encuentra ningún personaje, muestra un mensaje adecuado.
-
-    Búsqueda múltiple:
-    Permite al usuario buscar personajes, episodios y ubicaciones a la vez, mostrando los resultados clasificados por tipo (por ejemplo: “Resultados en personajes: …”, “Resultados en episodios: …”).
-
-    Top de especies más comunes:
-    Analiza todos los personajes y muestra un ranking con las 3 especies más frecuentes.
-
-Implementa un bloque try/catch que capture errores de red o búsquedas inválidas. Si no se encuentra ningún personaje, muestra un mensaje adecuado.
-
-Búsqueda múltiple:
-Permite al usuario buscar personajes, episodios y ubicaciones a la vez, mostrando los resultados clasificados por tipo (por ejemplo: “Resultados en personajes: …”, “Resultados en episodios: …”).
-
-Top de especies más comunes:
-Analiza todos los personajes y muestra un ranking con las 3 especies más frecuentes.
-*/
+})
