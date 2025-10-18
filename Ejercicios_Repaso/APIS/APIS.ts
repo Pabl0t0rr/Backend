@@ -5,6 +5,7 @@ type Response,
 type NextFunction
 } from "express";
 import cors from "cors";
+import { error } from "console";
 
 //Creacion de tipos para alamacenar la info
 type Character = {
@@ -52,7 +53,7 @@ app.listen(port, () => {
     console.log(`🚀 Server started at http://localhost:${port}`);
 })
 
-//RUTAS Para personajes
+//RUTAS para personajes
 //GET Listar todos los personajes
 app.get("/characters" , (req, res) => {
     try{
@@ -73,8 +74,8 @@ app.get("/characters/:id", (req, res)=> {
     } 
 })
 
-//Post crear un nuevo personaje teniendo en cuenta que le idque se le dara sera el siguiente disponible
-app.post("characters", (req, res) => {
+//Post crear un nuevo personaje teniendo en cuenta que el id que sera siguiente numero
+app.post("/characters", (req, res) => {
     try{
         const newCharacter : Character = {
             id : characters.length + 1,
@@ -88,3 +89,89 @@ app.post("characters", (req, res) => {
         res.status(500).json({error: "Error al buscar una persona mediante un ID" , details : err.message});    
     }
 })
+
+//Put modificar un personaje
+app.put("/characters/:id", (req, res) => {
+    try{
+        const id = Number(req.params.id);
+        const exist = characters.findIndex((c) => c.id === id);
+        if(exist === -1){
+            return res.status(404).json({error: "No existe una persona con ese ID"});
+        }
+        characters[exist] = {
+            ...characters[exist] ,
+            ...req.body
+        }
+        const contador = exist +1;
+
+        res.json({
+            message : "Persona con id : " + contador + " modificada con exito",
+            character : characters[exist]
+
+        })
+    }catch(err : any){
+        res.status(500).json({error: "Error al modificar una persona mediante un ID" , details : err.message});
+    }
+});
+
+//Delete personaje mediante id
+app.delete("/characters/:id", (req,res) => {
+    try{
+        const id = Number(req.params.id);
+        const exist = characters.findIndex((i) => i.id === id);
+
+        if(exist === -1){
+            return res.status(404).json({error: "Error al intentar borrar una persona que no existe mediante el id"});
+        }
+
+        characters = characters.filter((c) => c.id !== id); 
+
+        res.json({message: "Personaje borrado mediante el ID: " + id + "satisfactoriamente"})
+
+    }catch(err : any){
+        res.status(500).json({error: "Error al borrar una persona medinate el ID" , details : err.message});
+    }
+});
+
+//RUTAS para Animales
+//Get de todos los animales
+app.get("/animals" , (req, res) => {
+    try{
+        res.json(animals);
+    }catch(err : any){
+        res.status(500).json({error: "Error al buscar todos los animales", details : err.message});
+    }
+});
+
+//Get de los animales con nombre = x y mostrar todos los que coincidan
+app.get("/animals/:name", (req, res) => {
+    try {
+        const name = String(req.params.name).toLowerCase();
+        const exist = animals.filter((n) => n.name.toLowerCase() === name);
+        if(exist.length === 0){
+            res.status(404).json({error : "Error al buscar un animal mediante NAME"});
+        }
+
+        res.json(exist);
+
+    } catch (err : any) {
+        res.status(500).json({error : "Error al buscar un animal mediante su nombre", details : err.message});
+        
+    }
+});
+//Post crear un nuevo animal con el siguiente id y la info del primer character
+app.post("/animals", (req, res) => {
+    try {
+        const newAnimal : Animal = {
+            id : animals.length + 1,
+            ...req.body,
+            ownerInfo : characters[0]
+        };
+
+        animals.push(newAnimal);
+        res.status(201).json(newAnimal);
+
+    } catch (err: any) {
+        res.status(500).json({error :"Error al crear un nuevo animal", details : err.message});
+    }
+});
