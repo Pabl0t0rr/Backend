@@ -175,3 +175,46 @@ app.post("/animals", (req, res) => {
         res.status(500).json({error :"Error al crear un nuevo animal", details : err.message});
     }
 });
+
+//Put modificar animal mediante id
+app.put("/animals/:id", (req, res) => {
+    try {
+        const id = Number (req.params.id);
+        const exist = animals.findIndex((i) => i.id === id);
+
+        if(exist === -1){
+            return res.status(404).json({error: "No existe ningun animal con ese id"});
+        }
+        animals[exist] = {
+            ...animals[exist],
+            ...req.body
+        };
+        const contador = exist +1;
+
+        res.json({
+            message: "Animal con el id:" + contador + " modificado con exito",
+            animal : animals[exist]
+        })    
+    } catch (err : any) {
+        res.status(500).json({error : "Error al modificar un animal mediante un ID" , details : err.message});
+    }
+});
+
+//Delete animal medinate id
+app.delete("/animals/:id", (req, res) => {
+    try {
+        const id = Number(req.params.id);
+        const exist = animals.findIndex((i) => i.id === id);
+        
+        if(exist === -1){
+            return res.status(404).json({error : "Errro al eliminar un anumal mediante el id"});
+        }
+
+        animals = animals.filter((i) => i.id !== id);
+
+        res.json({message: "Animal con id: " + id + " borrado correctamente"});
+        
+    } catch (err : any) {
+        res.status(500).json({error : "Error al intentar borrr un animal mediante el id", detail: err.message});
+    }
+});
