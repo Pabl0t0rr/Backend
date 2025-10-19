@@ -269,10 +269,10 @@ const probarFuncionesCharacters = async () => {
 
         //Get todos characters
         const getTodosCharacters_4 = (await axios.get(urlTodosCharacters)).data;
-
+        
         //Devolver toda la info de characters 
         return {
-            "🌍 URL Raíz" :getUrlGlobal,
+            "🌍 URL Raíz": getUrlGlobal,
             "🐕 Todos los Characters (inicio)": getTodosCharacters,
             "🔎 Character buscado por id": getCharactersID,
             "➕ Character creado": postCrearCharacter,
