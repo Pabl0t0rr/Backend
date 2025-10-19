@@ -5,7 +5,8 @@ type Response,
 type NextFunction
 } from "express";
 import cors from "cors";
-import { error } from "console";
+
+import axios from "axios";
 
 //Creacion de tipos para alamacenar la info
 type Character = {
@@ -149,7 +150,7 @@ app.get("/animals/:name", (req, res) => {
         const name = String(req.params.name).toLowerCase();
         const exist = animals.filter((n) => n.name.toLowerCase() === name);
         if(exist.length === 0){
-            res.status(404).json({error : "Error al buscar un animal mediante NAME"});
+            return res.status(404).json({error : "Error al buscar un animal mediante NAME"});
         }
 
         res.json(exist);
@@ -218,3 +219,161 @@ app.delete("/animals/:id", (req, res) => {
         res.status(500).json({error : "Error al intentar borrr un animal mediante el id", detail: err.message});
     }
 });
+
+const url = ["http://localhost:3000"];
+
+//Crecion de funcion para probar todos los metodos anteriores mediante el uso de axios
+const probarFuncionesCharacters = async () => {
+     const id = 1;
+
+    try {
+        //Get general
+        const urlGlobal = url + "/";
+        const getUrlGlobal = (await axios.get(urlGlobal + "/")).data;
+
+        //Get todos characters
+        const urlTodosCharacters = url + "/characters";
+        const getTodosCharacters = (await axios.get(urlTodosCharacters)).data;
+
+        //Get characters por id
+        const urlCharactersID = urlTodosCharacters + "/" + id;
+        const getCharactersID = (await axios.get(urlCharactersID)).data;
+        
+        //Post crear characters
+        const newCharacter = {
+            name : "Alfredo", 
+            age: 22,
+            gender : "Male"
+        };
+        const urlCrearCharacter = urlTodosCharacters;
+        const postCrearCharacter = (await (axios.post(urlCrearCharacter, newCharacter))).data;
+
+        //Get todos characters
+        const getTodosCharacters_2 = (await axios.get(urlTodosCharacters)).data;
+
+        //put modificar characters
+        const characterModificado = {
+            name : "Juan_Modificado",
+            age : 70,
+            gender : "Male"
+        }
+        const urlModificarCharacter = urlTodosCharacters + "/" + id;
+        const putModificarCharacterID = (await axios.put(urlModificarCharacter, characterModificado)).data;
+
+        //Get todos characters
+        const getTodosCharacters_3 = (await axios.get(urlTodosCharacters)).data;
+
+        //Delete characters medinate id
+        const urlDeleteCharacter = urlTodosCharacters + "/" + id;
+        const deleteCharacterID = (await axios.delete(urlDeleteCharacter)).data;
+
+        //Get todos characters
+        const getTodosCharacters_4 = (await axios.get(urlTodosCharacters)).data;
+
+        //Devolver toda la info de characters 
+        return {
+            "🌍 URL Raíz" :getUrlGlobal,
+            "🐕 Todos los Characters (inicio)": getTodosCharacters,
+            "🔎 Character buscado por id": getCharactersID,
+            "➕ Character creado": postCrearCharacter,
+            "📋 Characters tras creación": getTodosCharacters_2,
+            "✏️ Character modificado": putModificarCharacterID,
+            "📋 Characters tras modificación": getTodosCharacters_3,
+            "❌ Character eliminado": deleteCharacterID,
+            "📋 Characters tras eliminación": getTodosCharacters_4
+        };
+
+    //Manejo de errores    
+    } catch (err : any) {
+        if(axios.isAxiosError(err)){
+            console.log("Axios error: " + err.message);
+        }else{
+            console.log("Unexpected error: " + err.message);
+        }
+    }
+};
+
+//Llamada a la funcion para probar las funciones de characters
+setTimeout(async () => {
+  const pruebaCharacters = await probarFuncionesCharacters();
+  console.log(pruebaCharacters);
+}, 1000);
+
+
+const probarFuncionesAnimals = async () => {
+    const id = 1;
+    const name = "Snuffles";
+    try{
+        //Get general
+        const urlGlobal = url + "/";
+        const getUrlGlobal = (await axios.get(urlGlobal + "/")).data;
+
+        //Get todos animales
+        const urlTodosAnimales = url + "/animals";
+        const getTodosAnimales = (await axios.get(urlTodosAnimales)).data;
+
+        //Get animales por id
+        const urlAnimalesName = urlTodosAnimales + "/" + name;
+        const getAnimalesName = (await axios.get(urlAnimalesName)).data;
+
+        //Post crear animales
+        const newAnimal = {
+            name : "Alfredo", 
+            species : "Dog",
+            age: 3,
+            ownerInfo : characters[0]
+        };
+        const urlCrearAnimal = urlTodosAnimales;
+        const postCrearAnimal = (await (axios.post(urlCrearAnimal, newAnimal))).data;
+
+        //Get todos animales
+        const getTodosAnimales_2 = (await axios.get(urlTodosAnimales)).data;
+
+        //put modificar animales
+        const animalModificado = {
+            name: "Snuffles_Modificado",
+            species: "Dog",
+            age: 5
+            };
+
+        const urlModificarAnimal = urlTodosAnimales + "/" + id;
+        const putModificarAnimalID = (await axios.put(urlModificarAnimal, animalModificado)).data;
+
+        //Get todos animales
+        const getTodosAnimales_3 = (await axios.get(urlTodosAnimales)).data;
+
+        //Delete animales medinate id
+        const urlDeleteAnimal = urlTodosAnimales + "/" + id;
+        const deleteAnimalID = (await axios.delete(urlDeleteAnimal)).data;
+
+        //Get todos animales
+        const getTodosAnimales_4 = (await axios.get(urlTodosAnimales)).data;
+
+        //Devolver toda la info de animales
+        return {
+            "🌍 URL Raíz": getUrlGlobal,
+            "🐕 Todos los animales (inicio)": getTodosAnimales,
+            "🔎 Animal buscado por nombre": getAnimalesName,
+            "➕ Animal creado": postCrearAnimal,
+            "📋 Animales tras creación": getTodosAnimales_2,
+            "✏️ Animal modificado": putModificarAnimalID,
+            "📋 Animales tras modificación": getTodosAnimales_3,
+            "❌ Animal eliminado": deleteAnimalID,
+            "📋 Animales tras eliminación": getTodosAnimales_4
+};
+
+    //Manejo de errores    
+    } catch (err : any) {
+        if(axios.isAxiosError(err)){
+            console.log("Axios error: " + err.message);
+        }else{
+            console.log("Unexpected error: " + err.message);
+        }
+    }
+};
+
+//Llamada a la funcion para probar las funciones de Animales
+setTimeout(async () => {
+  const pruebaAnimals = await probarFuncionesAnimals();
+  console.log(pruebaAnimals);
+}, 1000);
