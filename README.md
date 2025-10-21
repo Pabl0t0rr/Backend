@@ -27,6 +27,7 @@ Estructura principal del repositorio:
 
 ```bash
 ├── Ejercicio_Repaso/     ← Contenido para mejorar en diversos aspectos
+├── Parcial/              ← Resolucion del examen parcial
 ├── Practicas/            ← Contenido de las practicas de la asignatura
 ├── Teoria/               ← Contenido clase (Apuntes, Ejericios)
 ├── index.ts             
