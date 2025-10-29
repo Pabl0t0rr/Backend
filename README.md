@@ -30,10 +30,7 @@ Estructura principal del repositorio:
 ├── Parcial/              ← Resolucion del examen parcial
 ├── Practicas/            ← Contenido de las practicas de la asignatura
 ├── Teoria/               ← Contenido clase (Apuntes, Ejericios)
-├── index.ts             
-├── package.json          
-├── package-lock.json     
-├── tsconfig.json         
+├── .gitignore            ← Indica a Git qué archivos y carpetas debe ignorar     
 └── README.md
 ```
 ---
@@ -44,7 +41,7 @@ Aunque el repositorio no está enfocado en una aplicación concreta (como un ser
 
 1. **Organizar y centralizar** todo lo trabajado en la asignatura Arquitectura y programación de sistemas en internet.  
 2. **Facilitar el acceso** al material tanto teórico como práctico.  
-3. Servir como **repositorio de referencia** para el estudiante y el profesor.  
+3. Servir como **repositorio de referencia** para el compañeros.  
 4. Permitir evolucionar con nuevas prácticas, ejercicios o ejemplos conforme avance el curso.
 
 ---
