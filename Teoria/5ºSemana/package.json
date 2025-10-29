@@ -1,0 +1,45 @@
+{
+  "name": "back",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "ts-node index.ts",
+    "dev": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm index.ts\"",
+    "dev:Semana1": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm Teoria/1ºSemana/1ºSemana.ts\"",
+    "dev:Semana2": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm Teoria/2ºSemana/2ºSemanaEJ.ts\"",
+    "dev:Semana3": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm Teoria/3ºSemana/Martes/3ºSemana.ts\"",
+    "dev:Semana4": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm Teoria/4ºSemana/Martes/4ºSemana.ts\"",
+    "dev:Semana5": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm Teoria/5ºSemana/Martes/5ºSemana.ts\"",
+    "dev:Semana6": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm Teoria/6ºSemana/Lunes/6ºSemana.ts\"",
+    "dev:Practicas": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm Practicas/Practica1/Practica1.ts\"",
+    "dev:EjRep": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm Ejercicios_Repaso/APIS/APIS.ts \""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Pabl0t0rr/Backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Pabl0t0rr/Backend/issues"
+  },
+  "homepage": "https://github.com/Pabl0t0rr/Backend#readme",
+  "devDependencies": {
+    "@types/axios": "^0.14.4",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.5.2",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "axios": "^1.12.2",
+    "cors": "^2.8.5",
+    "express": "^5.1.0"
+  },
+  "type": "module"
+}
