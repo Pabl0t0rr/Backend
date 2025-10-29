@@ -8,7 +8,6 @@
     "start": "ts-node index.ts",
     "dev": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm 2ºSemana.ts\"",
     "dev:Ej": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm 2ºSemanaEJ.ts\""
-
   },
   "repository": {
     "type": "git",
