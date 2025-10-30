@@ -6,8 +6,12 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "ts-node index.ts",
-    "dev:1": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm Practica1/Practica1.ts\""
-
+    "dev:1_1": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm Practica1/Ejercicio_1.ts\"",
+    "dev:1_2": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm Practica1/Ejercicio_2.ts\"",
+    "dev:1_3": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm Practica1/Ejercicio_3.ts\"",
+    "dev:2_1": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm Practica2/Ejercicio_1.ts\"",
+    "dev:2_2": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm Practica2/Ejercicio_2.ts\"",
+    "dev:2_3": "nodemon --watch . --ext ts,json --exec \"node --loader ts-node/esm Practica2/Ejercicio_3.ts\""
   },
   "repository": {
     "type": "git",
