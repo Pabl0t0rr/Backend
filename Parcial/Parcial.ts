@@ -110,11 +110,11 @@ const testApi = async () => {
     try {
         //Get general
         const urlGlobal = url + "/";
-        const getUrlGlobal = (await axios.get(urlGlobal + "/")).data;
+        const getUrlGlobal :LD[] = (await axios.get(urlGlobal + "/")).data;
 
         //Get todos LD
         const urlTodosLD = url + "/ld";
-        const getTodos_LD = (await axios.get(urlTodosLD)).data;
+        const getTodos_LD :LD[] = (await axios.get(urlTodosLD)).data;
 
         //Post crear LD
         const newLD = {
@@ -125,18 +125,18 @@ const testApi = async () => {
             videoFormat : "NTSC"
         }
         const urlCrearLD = urlTodosLD;
-        const post_Crear_LD = (await (axios.post(urlCrearLD, newLD))).data;
+        const post_Crear_LD :LD = (await (axios.post(urlCrearLD, newLD))).data;
 
         //Get todos LD
-        const getTodos_LD_2 = (await axios.get(urlTodosLD)).data;
+        const getTodos_LD_2 :LD[] = (await axios.get(urlTodosLD)).data;
 
         //Delete LD medinate id
         const urlDeleteLD = urlTodosLD + "/" + id;
-        const delete_LD_ID = (await axios.delete(urlDeleteLD)).data;
+        const delete_LD_ID :LD = (await axios.delete(urlDeleteLD)).data;
 
         //Get todos LD
-        const getTodos_LD_3 = (await axios.get(urlTodosLD)).data;
-        
+        const getTodos_LD_3 :LD[] = (await axios.get(urlTodosLD)).data;
+
         //Devolver toda la info requerida de LD  
         return {
             "🌍 URL Raíz": getUrlGlobal,
