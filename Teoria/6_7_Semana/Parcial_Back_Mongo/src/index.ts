@@ -9,5 +9,5 @@ connectMongoDB();
 
 const app = express();
 app.use(express.json());
-app.use("/api/personas", routerPersonas);
+app.use("/api/disk", routerPersonas);
 app.listen(process.env.PORT, () => console.log("El API ha comenzado baby"));
