@@ -1,0 +1,36 @@
+{
+  "name": "practica_2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./src/index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "ts-node ./src/index.ts",
+    "dev1_1": "nodemon --exec ts-node ./Practica1/Ejercicio_1.ts",
+    "dev1_2": "nodemon --exec ts-node ./Practica1/Ejercicio_2.ts",
+    "dev1_3": "nodemon --exec ts-node ./Practica1/Ejercicio_3.ts",
+    "dev2_1": "nodemon --exec ts-node ./Practica2/Ejercicio_1.ts",
+    "dev2_2": "nodemon --exec ts-node ./Practica2/Ejercicio_2.ts",
+    "dev2_3": "nodemon --exec ts-node ./Practica2/Ejercicio_3.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/axios": "^0.14.4",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.5",
+    "@types/node": "^24.9.2",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "axios": "^1.13.1",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "mongodb": "^6.20.0"
+  },
+  "type": "commonjs"
+}
