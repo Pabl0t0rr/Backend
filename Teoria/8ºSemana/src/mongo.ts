@@ -1,8 +1,11 @@
 import { Db, MongoClient } from "mongodb";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 let client: MongoClient;
 let dB: Db;
-const dbName = "Nebrija";
+const dbName = process.env.DB_NAME;
 
 export const connectMongoDB = async (): Promise<void> => {
   try {

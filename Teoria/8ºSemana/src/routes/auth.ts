@@ -21,8 +21,8 @@ type JwtPayload = {
   id: string;
   email : string;
 };
-
-const coleccion = () => getDb().collection<User>("Auth");
+const collectionName  = process.env.COLLECTION_NAME;
+const coleccion = () => getDb().collection<User>(collectionName as string);
 
 
 // Obtener todos los usuarios
