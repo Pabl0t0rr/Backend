@@ -54,7 +54,7 @@ router.get("/:id",validateId, async (req, res) => {
 });
 
 //Crear un post con las validaciones basicas
-router.post(`/`, validateId, validateDisco, async (req, res) => {
+router.post(`/`, validateDisco, async (req, res) => {
   try {
  
       const result = await coleccion().insertOne(req.body);
@@ -68,7 +68,7 @@ router.post(`/`, validateId, validateDisco, async (req, res) => {
 });
 
 //PUT para actualizar un disco mediante un id
-router.put("/:id", validateId, validateDisco, async (req, res) => {
+router.put("/:id", validateDisco, async (req, res) => {
   try {
     const idDelParametro = req.params?.id;
 
