@@ -1,6 +1,6 @@
 import { ApolloServer } from "apollo-server";
-import { schema as typeDefs } from "./squema";
-import { resolvers } from "./resolvers";
+import { schema as typeDefs } from "./graphql/squema";
+import { resolvers } from "./graphql/resolvers";
 
 const server = new ApolloServer({typeDefs, resolvers});
 
