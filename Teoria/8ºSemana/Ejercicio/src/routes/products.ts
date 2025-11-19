@@ -100,51 +100,6 @@ router.put("/", verifyToken, validateBuy, async (req : authRequest, res) => {
     }
 })
 
-router.put("/comprarProducto", verifyToken, validateBuy, async (req: authRequest, res) => {
-  try {
-    const { productId } = req.body;
-
-    // Obtener id del comprador desde el token
-    const idBuyer = decodeToken(req);
-    
-    if (!idBuyer) {
-      return res.status(401).json({ message: "Token inválido o faltante" });
-    }
-
-    if (!productId) {
-      return res.status(400).json({ message: "Product ID is required" });
-    }
-
-    // Buscar el producto por su ID
-    const producto = await coleccion().findOne({ _id: new ObjectId(productId) });
-
-    if (!producto) {
-      return res.status(404).json({ message: "Producto no encontrado" });
-    }
-
-    // Comprobar si el comprador ya está en idsBuyer
-    if (producto.idsBuyer.includes(idBuyer)) {
-      return res.status(400).json({ message: "El usuario ya compró este producto" });
-    }
-
-    // Actualizar el producto: añadir idBuyer al array
-    await coleccion().updateOne(
-      { _id: new ObjectId(productId) },
-      {
-        $push: { idsBuyer: idBuyer },
-      }
-    );
-
-    // Devolver producto actualizado
-    const productoActualizado = await coleccion().findOne({ _id: new ObjectId(productId) });
-
-    res.status(200).json({ modifiedProduct: productoActualizado });
-
-  } catch (err) {
-    res.status(500).json({ message: String(err) });
-  }
-});
-
 //Borrar un producto
 router.delete("/:id", verifyToken, validateIdProduct, async (req: authRequest, res) => {
     try {
