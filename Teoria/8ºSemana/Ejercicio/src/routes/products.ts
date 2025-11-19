@@ -25,12 +25,12 @@ router.get("/", async (req, res) => {
     try {
         const {idCreatorUser, idsBuyer, name, description } = req.query;
         const filter  = [];
-        if (idCreatorUser) filter.push({idCreatorUser : idCreatorUser.toString()});
-        if(idsBuyer) filter.push({idsBuyer : ObjectId})
-        if(name)filter.push({name : name.toString().toLowerCase()})  
-        if(description) filter.push({description : description.toString().toLowerCase()})        
+        if (idCreatorUser) filter.push({idCreatorUser : idCreatorUser});
+        if(idsBuyer) filter.push({idsBuyer : idsBuyer});
+        if (name) filter.push({name : name})  
+        if (description) filter.push({description : description})
    
-        const productFiltro = filter.length > 0 ? {$and : filter} : {};
+        const productFiltro = filter.length > 0 ? {$or : filter} : {}; //Cambiar el and por or si quiero otro formato en postaman
         const resultados = await coleccion().find(productFiltro).toArray();
         res.status(200).json(resultados);
 
