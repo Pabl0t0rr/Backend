@@ -1,17 +1,17 @@
 import { Request, Response, NextFunction } from "express";
 
 export const validateProduct = async (req: Request, res: Response, next: NextFunction) => {
-  const { idCreatorUser, idsBuyer,name,description }= req.params;
-    const errors = [];
+  const { idCreatorUser, idsBuyer,name,description }= req.body;
+    const errors  : {campo : string, message: string}[] = [];
     const method = req.method;
     if (method === "POST"){
 
-        if(!idCreatorUser || typeof idCreatorUser !== "number"){
-            errors.push({campo : "idCreatorUser", message : "It must exist and be a number"});
+        if(!idCreatorUser || typeof idCreatorUser !== "string" || idCreatorUser.length !== 24){
+            errors.push({campo : "idCreatorUser", message : "It must exist, be an string and have 24 char for length"});
         }
 
-        if(!idsBuyer || (Array.isArray(idsBuyer) && idsBuyer.every(item => typeof item === "string"))){
-            errors.push({campo : "idsBuyer", message : "It must exist and be an array of text IDS"});
+       if (!Array.isArray(idsBuyer) || !idsBuyer.every(item => typeof item === "string" || item === null)) {
+            errors.push({ campo: "idsBuyer", message: "It must be an array of text IDs" });
         }
 
         if(!name || typeof name !== "string"){
@@ -24,19 +24,19 @@ export const validateProduct = async (req: Request, res: Response, next: NextFun
     
     }else if (method === "PUT"){
 
-         if(idCreatorUser !== undefined || typeof idCreatorUser !== "number"){
-            errors.push({campo : "idCreatorUser", message : "It must be a number to send it"});
+         if(idCreatorUser !== undefined && typeof idCreatorUser !== "string"){
+            errors.push({campo : "idCreatorUser", message : "It must be a string to send it"});
         }
 
-        if(!idsBuyer || (Array.isArray(idsBuyer) && idsBuyer.every(item => typeof item === "string"))){
+        if(!idsBuyer && (Array.isArray(idsBuyer) && idsBuyer.every(item => typeof item === "string" || item === null))){
             errors.push({campo : "idsBuyer", message : "It must be an array of text IDS to send it"});
         }
 
-        if(name !== undefined || typeof name !== "string"){
+        if(name !== undefined && typeof name !== "string"){
             errors.push({campo : "name", message : "It must be a text to send it"});
         }
 
-        if(description !== undefined || typeof description !== "string"){
+        if(description !== undefined && typeof description !== "string"){
             errors.push({campo : "description", message : "It must be a text to send it"});
         }
     

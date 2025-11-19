@@ -1,27 +1,18 @@
 import { Router } from "express";
 import { getDb } from "../mongo";
-import { ObjectId } from "mongodb";
+import { User, JwtPayload } from "../types";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+
+//Imports middlewares
+import { registerUser , loginUser } from "../middlewares/users/validateUser";
 
 dotenv.config();
 
 const router = Router();
 
 const SECRET = process.env.SECRET;
-
-type User = {
-  _id?: ObjectId;
-  email: string;
-  username: string;
-  password: string;
-};
-
-type JwtPayload = {
-  id: string;
-  email : string;
-};
 
 const collectionName  = process.env.COLLECTION_NAME_U;
 const coleccion = () => getDb().collection<User>(collectionName as string);
@@ -37,7 +28,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.post("/signin", async (req, res) => {
+router.post("/reg", registerUser, async (req, res) => {
 
   try {
     const {email, username, password} = req.body as {email : string, username: string, password : string};
@@ -59,7 +50,7 @@ router.post("/signin", async (req, res) => {
   }
 });
 
-router.post("/login", async(req, res) => {
+router.post("/login", loginUser, async(req, res) => {
   try {
     const {email, password} = req.body as {email : string, password : string};
     const users = coleccion();
