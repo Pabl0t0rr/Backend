@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { ObjectId } from "mongodb";
 import { getDb } from "../mongo";
-import { Product } from "../types";
+import { JwtPayload, Product } from "../types";
 
 //Import middlewares
 import { authRequest,verifyToken } from "../middlewares/verifyToken";
@@ -81,7 +81,7 @@ router.put("/:id", verifyToken, validateProduct, async (req : authRequest, res) 
 router.put("/", verifyToken, validateBuy, async (req : authRequest, res) => {
     try {
         const productoId : string = (req as any).productId;
-        const userId : string = (req as any).tokenIdBuyerDecoded;
+        const userId: string = (req.user as JwtPayload)?.id;
        
         //OBtener coleccion antes de actualizar
         const productosColeccion =  await coleccion().findOne({_id : new ObjectId (productoId)});
