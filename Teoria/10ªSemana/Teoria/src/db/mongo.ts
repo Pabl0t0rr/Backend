@@ -5,6 +5,7 @@ dotenv.config();
 
 let client: MongoClient;
 let dB: Db;
+
 const dbName = process.env.DB_NAME;
 
 export const connectMongoDB = async (): Promise<void> => {
@@ -19,4 +20,16 @@ export const connectMongoDB = async (): Promise<void> => {
   }
 };
 
-export const getDb = ():Db => dB;
+export const getDB = ():Db => dB;
+
+//Cerrar las llamadas a mongo
+export const closeMongoDB = async() => {
+  try {
+    
+    client && await client.close();
+
+  } catch (error) {
+
+    console.log("Error closing mongo: ", error); 
+  }
+};

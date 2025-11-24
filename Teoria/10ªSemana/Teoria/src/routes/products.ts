@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { ObjectId } from "mongodb";
-import { getDb } from "../mongo";
+import { getDb } from "../db/mongo";
 
 //Import middlewares
 import { authRequest,verifyToken } from "../middlewares/verifyToken";

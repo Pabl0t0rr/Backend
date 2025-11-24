@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getDb } from "../mongo";
+import { getDb } from "../db/mongo";
 import { ObjectId } from "mongodb";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
