@@ -6,7 +6,7 @@ import { coleccion } from "../../routes/products";
 
 
 export const validateIdProduct = async (req: Request, res: Response, next: NextFunction) => {
-    const {productId} = req.body;
+    const {productId } = req.body;
     const errors = [];
 
     if(productId.length !== 24){

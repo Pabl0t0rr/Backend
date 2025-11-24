@@ -9,6 +9,9 @@ export const validateBuy = async (req : Request, res: Response, next: NextFuncti
     const {productId} = req.body;
     const errors  = [];
 
+    if(productId.length !== 24){
+        errors.push({campo : "productId", message : "It must have 24 characters"});
+    }
 
     if(!productId || typeof productId !== "string"){
         errors.push({campo : "productId", message : "It is required and must be a text"});

@@ -37,18 +37,16 @@ router.get("/", async (req, res) => {
 router.post("/", verifyToken, validateProduct, async (req:authRequest, res) => {
     try {
         const userId : string = (req.user as JwtPayload)?.id;
-        const idsBuyerInit : string [] = [];
+        const idsBuyerInit : string [] = []; //Para iniciarlo vacio cnd se crea el producto
 
         const productoCreado = await coleccion().insertOne({
-            ...req.body,
             idCreatorUser : userId,
             idsBuyer : idsBuyerInit,
-            name : req.body.name,
-            description : req.body.description
+            ...req.body            
         });
         const idMongo= productoCreado.insertedId;
         const productoFinal = await coleccion().findOne({_id : idMongo});
-        res.status(201).json(productoFinal);
+        res.status(201).json({newProduct : productoFinal});
 
     } catch (err) {
         res.status(500).json({message :err});
@@ -59,35 +57,37 @@ router.post("/", verifyToken, validateProduct, async (req:authRequest, res) => {
 router.put("/", verifyToken, validateProduct, async (req : authRequest, res) => {
     try {
 
-        const items : { productoId : string, idsBuyer: string[], name: string, description: string} = req.body;
+        const { productoId , name, description } = req.body;
         const userId : string = ( req.user as JwtPayload)?.id;
 
         //Comprobar que el  usuario que quiere modificar el producto es el idCreatorUser del producto
         const usuarioCorrecto = await coleccion().findOne(
-            { _id : new ObjectId(items.productoId) }
+            { _id : new ObjectId(productoId as string) }
         );
 
-        if(usuarioCorrecto?.idCreatorUser !== userId){
-            return  res.status(403).json({message : "You are not allowed to modify this product"});
+        //Comprobar que el usuario que quiere modificar el producto es el idCreatorUser del producto
+        if(usuarioCorrecto!.idCreatorUser !== userId){
+            return  res.status(403).json({message : "You are not allowed to modify this product because is not yours"});
         }
+
 
         //Actualizar el producto
         const productoModificado : Product = {
             idCreatorUser : userId,
-            idsBuyer : items.idsBuyer,
-            name : items.name,
-            description : items.description
+            idsBuyer : usuarioCorrecto?.idsBuyer || [],
+            name : name,
+            description : description
         };
         
         const result = await coleccion().updateOne(
-            { _id : new ObjectId(items.productoId) },
+            { _id : new ObjectId(productoId as string) },
             { $set : productoModificado }
         );
 
         res.status(200).json({modifiedProduct: productoModificado});
 
     } catch (err) {
-        res.status(500).json({mesnaje : err});
+        res.status(500).json({mensaje : err});
     }
 });
 
@@ -120,9 +120,19 @@ router.put("/buy", verifyToken, validateBuy, async (req : authRequest, res) => {
 })
 
 //Borrar un producto
-router.delete("/", verifyToken, validateIdProduct, async (req, res) => {
+router.delete("/", verifyToken, validateIdProduct, async (req : authRequest, res) => {
     try {
         const productId : string = req.body.productId;
+        const userId : string = (req.user as JwtPayload)?.id;
+
+        //Comprobar que el usuario que quiere borrar el producto es el idCreatorUser del producto
+        const usuarioCorrecto = await coleccion().findOne(
+            { _id : new ObjectId(productId) }
+        );
+
+        if(usuarioCorrecto?.idCreatorUser !== userId){
+            return  res.status(403).json({message : "You are not allowed to delete this product because is not yours"});
+        }
 
         const productoBorrar = await coleccion().findOne(
             {_id : new ObjectId(productId)}
@@ -130,7 +140,7 @@ router.delete("/", verifyToken, validateIdProduct, async (req, res) => {
         const result = await coleccion().deleteOne(
             {_id : new ObjectId(productId)});
 
-        res.status(200).json({productoBorrado : productoBorrar, result})
+        res.status(200).json({productoBorrado : productoBorrar});
     } catch (err) {
         res.status(500).json({message : err});
     }
