@@ -14,7 +14,7 @@ export const validateIdProduct = async (req: Request, res: Response, next: NextF
     }
 
     if(!productId || typeof productId !== "string"){
-        errors.push({campo : "productId", message : "It mustexist and be a string"});
+        errors.push({campo : "productId", message : "It must exist and be a string"});
     }
 
     if(!await coleccion().findOne({_id : new ObjectId(productId as string)})){
