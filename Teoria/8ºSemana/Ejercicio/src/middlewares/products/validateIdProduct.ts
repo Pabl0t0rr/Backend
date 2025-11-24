@@ -1,22 +1,24 @@
-import { ObjectId } from "mongodb";
-import { coleccion } from "../../routes/products";
 import { Request, Response, NextFunction } from "express";
+import { ObjectId } from "mongodb";
+
+//Import routes
+import { coleccion } from "../../routes/products";
 
 
 export const validateIdProduct = async (req: Request, res: Response, next: NextFunction) => {
-    const {id} = req.params;
+    const {productId} = req.body;
     const errors = [];
 
-    if(id.length !== 24){
-        errors.push({campo : "id", message : "It must have 24 characters"});
+    if(productId.length !== 24){
+        errors.push({campo : "productId", message : "It must have 24 characters"});
     }
 
-    if(!ObjectId.isValid(id)){
-        errors.push({campo : "id", message : "It must be a valid MongoDB ObjectId"});
+    if(!productId || typeof productId !== "string"){
+        errors.push({campo : "productId", message : "It mustexist and be a string"});
     }
 
-    if(!await coleccion().findOne({_id : new ObjectId(id)})){
-        errors.push({campo : "id", message : "It must exist in the DataBase"});
+    if(!await coleccion().findOne({_id : new ObjectId(productId as string)})){
+        errors.push({campo : "productId", message : "It must exist in the DataBase"});
     }
     
     if (errors.length > 0) {

@@ -1,18 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 
 export const validateProduct = async (req: Request, res: Response, next: NextFunction) => {
-  const { idCreatorUser, idsBuyer,name,description }= req.body;
+  const { idsBuyer,name,description }= req.body;
     const errors  : {campo : string, message: string}[] = [];
     const method = req.method;
     if (method === "POST"){
-
-        if(!idCreatorUser || typeof idCreatorUser !== "string" || idCreatorUser.length !== 24){
-            errors.push({campo : "idCreatorUser", message : "It must exist, be an string and have 24 char for length"});
-        }
-
-       if (!Array.isArray(idsBuyer) || !idsBuyer.every(item => typeof item === "string" || item === null)) {
-            errors.push({ campo: "idsBuyer", message: "It must be an array of text IDs" });
-        }
 
         if(!name || typeof name !== "string"){
             errors.push({campo : "name", message : "It must exist and be a text"});
@@ -23,10 +15,6 @@ export const validateProduct = async (req: Request, res: Response, next: NextFun
         }
     
     }else if (method === "PUT"){
-
-         if(idCreatorUser !== undefined && typeof idCreatorUser !== "string"){
-            errors.push({campo : "idCreatorUser", message : "It must be a string to send it"});
-        }
 
         if(!idsBuyer && (Array.isArray(idsBuyer) && idsBuyer.every(item => typeof item === "string" || item === null))){
             errors.push({campo : "idsBuyer", message : "It must be an array of text IDS to send it"});

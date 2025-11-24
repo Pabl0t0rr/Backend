@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { ObjectId } from "mongodb";
-import { getDb } from "../mongo";
-import { JwtPayload, Product } from "../types";
+import { getDb } from "../db/mongo";
+import { JwtPayload, Product } from "../types/types";
 
 //Import middlewares
 import { authRequest,verifyToken } from "../middlewares/verifyToken";
@@ -9,13 +9,7 @@ import { validateProduct } from "../middlewares/products/validateProduct";
 import { validateIdProduct } from "../middlewares/products/validateIdProduct";
 import { validateBuy } from "../middlewares/products/validateBuy";
 
-//Imports utils
-import { decodeToken as decodedToken, decodeToken } from "../utils/decodeToken";
-
-
 const router = Router();
-
-
 
 const coleccionProducts = process.env.COLLECTION_NAME_P;
 export const coleccion = () => getDb().collection<Product>(coleccionProducts as string);
@@ -30,7 +24,7 @@ router.get("/", async (req, res) => {
         if (name) filter.push({name : name})  
         if (description) filter.push({description : description})
    
-        const productFiltro = filter.length > 0 ? {$or : filter} : {}; //Cambiar el and por or si quiero otro formato en postaman
+        const productFiltro = filter.length > 0 ? {$or : filter} : {}; //Cambiar el and por or si quiero otro formato en postman
         const resultados = await coleccion().find(productFiltro).toArray();
         res.status(200).json(resultados);
 
@@ -42,7 +36,16 @@ router.get("/", async (req, res) => {
 //Añadir un producto
 router.post("/", verifyToken, validateProduct, async (req:authRequest, res) => {
     try {
-        const productoCreado = await coleccion().insertOne(req.body);
+        const userId : string = (req.user as JwtPayload)?.id;
+        const idsBuyerInit : string [] = [];
+
+        const productoCreado = await coleccion().insertOne({
+            ...req.body,
+            idCreatorUser : userId,
+            idsBuyer : idsBuyerInit,
+            name : req.body.name,
+            description : req.body.description
+        });
         const idMongo= productoCreado.insertedId;
         const productoFinal = await coleccion().findOne({_id : idMongo});
         res.status(201).json(productoFinal);
@@ -53,20 +56,31 @@ router.post("/", verifyToken, validateProduct, async (req:authRequest, res) => {
 });
 
 //Modificar un producto
-router.put("/:id", verifyToken, validateProduct, async (req : authRequest, res) => {
+router.put("/", verifyToken, validateProduct, async (req : authRequest, res) => {
     try {
-        const items : {idCreatorUser : string, idsBuyer: string[], name: string, description: string} = req.body;
-        const idParametro = req.params.id;
 
+        const items : { productoId : string, idsBuyer: string[], name: string, description: string} = req.body;
+        const userId : string = ( req.user as JwtPayload)?.id;
+
+        //Comprobar que el  usuario que quiere modificar el producto es el idCreatorUser del producto
+        const usuarioCorrecto = await coleccion().findOne(
+            { _id : new ObjectId(items.productoId) }
+        );
+
+        if(usuarioCorrecto?.idCreatorUser !== userId){
+            return  res.status(403).json({message : "You are not allowed to modify this product"});
+        }
+
+        //Actualizar el producto
         const productoModificado : Product = {
-            idCreatorUser : items.idCreatorUser,
+            idCreatorUser : userId,
             idsBuyer : items.idsBuyer,
             name : items.name,
             description : items.description
         };
         
         const result = await coleccion().updateOne(
-            { _id : new ObjectId(idParametro) },
+            { _id : new ObjectId(items.productoId) },
             { $set : productoModificado }
         );
 
@@ -78,16 +92,21 @@ router.put("/:id", verifyToken, validateProduct, async (req : authRequest, res) 
 });
 
 //Comprar un producto (añadir un idBuyer al array idsBuyer)
-router.put("/", verifyToken, validateBuy, async (req : authRequest, res) => {
+router.put("/buy", verifyToken, validateBuy, async (req : authRequest, res) => {
     try {
-        const productoId : string = (req as any).productId;
+        const productoId : string =  req.body.productoId;
         const userId: string = (req.user as JwtPayload)?.id;
        
-        //OBtener coleccion antes de actualizar
-        const productosColeccion =  await coleccion().findOne({_id : new ObjectId (productoId)});
+        //Comprobar si el usuario ya ha comprado el producto
+        const productoComprado =  await coleccion().findOne({
+            _id : new ObjectId (productoId),
+            idsBuyer :  { $in : [userId] } //Comprobar si el id del usuario esta en el array idsBuyer
+        });
+
 
         //Actualizar el producto añadiendo el id del comprador al array idsBuyer
-        const idsBuyerUpdates = [...(productosColeccion?.idsBuyer || []), userId]; //? por si esta vacio    
+        const idsBuyerUpdates = [...(productoComprado?.idsBuyer || []), userId]; //Poner ? por si es vacio y en caso vacio poner un array vacio
+  
         const productAfterBuy = await coleccion().updateOne(
             {_id : new ObjectId (productoId as string)},
             {$set : {idsBuyer : idsBuyerUpdates}}
@@ -101,17 +120,17 @@ router.put("/", verifyToken, validateBuy, async (req : authRequest, res) => {
 })
 
 //Borrar un producto
-router.delete("/:id", verifyToken, validateIdProduct, async (req: authRequest, res) => {
+router.delete("/", verifyToken, validateIdProduct, async (req, res) => {
     try {
-        const idParam = req.params.id;
+        const productId : string = req.body.productId;
 
-        const productoABorrar = await coleccion().findOne(
-            {_id : new ObjectId(idParam)}
+        const productoBorrar = await coleccion().findOne(
+            {_id : new ObjectId(productId)}
         );
         const result = await coleccion().deleteOne(
-            {_id : new ObjectId(idParam)});
+            {_id : new ObjectId(productId)});
 
-        res.status(200).json({productoBorrado : productoABorrar, result})
+        res.status(200).json({productoBorrado : productoBorrar, result})
     } catch (err) {
         res.status(500).json({message : err});
     }

@@ -1,5 +1,5 @@
 import express from "express";
-import { connectMongoDB } from "./mongo";
+import { connectMongoDB } from "./db/mongo";
 import routesUsers from "./routes/users";
 import routesProducts from "./routes/products";
 import dotenv from "dotenv";
