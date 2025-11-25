@@ -17,10 +17,8 @@ export const validateBuy = async (req : Request, res: Response, next: NextFuncti
         errors.push({campo : "productId", message : "It is required and must be a text"});
     }
 
-    const findProduct = await coleccion().findOne ({_id : new ObjectId(productId as string)});
-
-    if(!findProduct){
-        errors.push({campo : "productId", message : "The productId does not exist"});
+    if(!await coleccion().findOne({_id : new ObjectId(productId as string)})){
+        errors.push({campo : "productId", message : "It must exist in the DataBase"});
     }
 
     if (errors.length > 0) {

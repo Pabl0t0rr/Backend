@@ -131,7 +131,7 @@ router.delete("/", verifyToken, validateIdProduct, async (req : authRequest, res
         );
 
         if(usuarioCorrecto?.idCreatorUser !== userId){
-            return  res.status(403).json({message : "You are not allowed to delete this product because is not yours"});
+            return  res.status(403).json({message : "You are not allowed to delete this product because is not yours"}); //Error 402 o 403?
         }
 
         const productoBorrar = await coleccion().findOne(
