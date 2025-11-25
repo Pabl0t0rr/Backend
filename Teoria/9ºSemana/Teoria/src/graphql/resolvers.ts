@@ -15,6 +15,7 @@ const carros : coche[] = [
         marca: "Ford",
         modelo: "2020"
     },
+    
     {
         id: "2",
         name: "Civic",
@@ -22,7 +23,6 @@ const carros : coche[] = [
         modelo: "2019"
     }
 ];
-
 
 export const resolvers : IResolvers = {
     Query: {
