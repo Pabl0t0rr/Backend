@@ -8,8 +8,8 @@ import { VideoGame } from "../types/videoGame";
 //Import environment variables
 import dotenv from "dotenv";
 import { User } from "../types/users";
-import { createUser, validateUser } from "../utils/usersVideoGames";
-import { signToken } from "../auth";
+import { createUser, validateUser } from "../utils/users";
+import { signToken } from "../utils/auth";
 import { validate } from "graphql";
 dotenv.config();
 

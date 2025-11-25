@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 
 //Import rutas
-import { getDB } from "./db/mongo";
+import { getDB } from "../db/mongo";
 import { ObjectId } from "mongodb";
 
 import dotenv from "dotenv";
