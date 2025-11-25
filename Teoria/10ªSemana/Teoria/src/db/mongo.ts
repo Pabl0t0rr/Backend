@@ -1,4 +1,7 @@
+//Imports basics
 import { Db, MongoClient } from "mongodb";
+
+//Import environment variables
 import dotenv from "dotenv";
 
 dotenv.config();

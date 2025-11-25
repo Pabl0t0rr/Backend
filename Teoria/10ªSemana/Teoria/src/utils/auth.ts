@@ -1,14 +1,14 @@
+//Imports basics
 import jwt from "jsonwebtoken";
+import { ObjectId } from "mongodb";
 
 //Import rutas
 import { getDB } from "../db/mongo";
-import { ObjectId } from "mongodb";
 
+//Import environment variables
 import dotenv from "dotenv";
 
-
 dotenv.config();
-
 
 const secret = process.env.SECRET;
 

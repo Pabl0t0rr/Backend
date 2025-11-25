@@ -1,9 +1,13 @@
+//Imports basics
 import { ApolloServer } from "apollo-server";
+
+//Import rutas
 import { connectMongoDB, closeMongoDB } from "./db/mongo"
 import { typeDefs } from "./graphql/squema";
 import { resolvers } from "./graphql/resolvers";
 import { getUserToken } from "./utils/auth";
 
+//Import environment variables
 import dotenv from "dotenv";
 
 dotenv.config();

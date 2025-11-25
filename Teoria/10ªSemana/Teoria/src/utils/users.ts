@@ -1,8 +1,11 @@
-import { getDB } from "../db/mongo";
+//Imports basics
 import { ObjectId } from "mongodb";
-
 import bcrypt from "bcryptjs";
 
+//Import rutas
+import { getDB } from "../db/mongo";
+
+//Import environment variables
 import dotenv from "dotenv";
 
 dotenv.config();

@@ -1,16 +1,19 @@
+//Imports basics
 import { ObjectId } from "mongodb";
 import { getDB } from "../db/mongo"
 import { IResolvers } from "@graphql-tools/utils";
 
 //Import types
 import { VideoGame } from "../types/videoGame";
+import { User } from "../types/users";
+
+//Import utils
+import { createUser, validateUser } from "../utils/users";
+import { signToken } from "../utils/auth";
 
 //Import environment variables
 import dotenv from "dotenv";
-import { User } from "../types/users";
-import { createUser, validateUser } from "../utils/users";
-import { signToken } from "../utils/auth";
-import { validate } from "graphql";
+
 dotenv.config();
 
 export const resolvers: IResolvers = {
