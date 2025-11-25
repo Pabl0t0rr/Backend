@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { getDb } from "../db/mongo";
-import { User, JwtPayload } from "../types/types";
+import { User, JwtPayload } from "../types/user";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";

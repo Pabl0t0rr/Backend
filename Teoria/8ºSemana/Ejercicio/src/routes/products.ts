@@ -1,18 +1,20 @@
 import { Router } from "express";
 import { ObjectId } from "mongodb";
 import { getDb } from "../db/mongo";
-import { JwtPayload, Product } from "../types/types";
+import { JwtPayload, User } from "../types/user";
+import { Product } from "../types/product";
 
 //Import middlewares
 import { authRequest,verifyToken } from "../middlewares/verifyToken";
 import { validateProduct } from "../middlewares/products/validateProduct";
 import { validateIdProduct } from "../middlewares/products/validateIdProduct";
-import { validateBuy } from "../middlewares/products/validateBuy";
 
 const router = Router();
 
-const coleccionProducts = process.env.COLLECTION_NAME_P;
-export const coleccion = () => getDb().collection<Product>(coleccionProducts as string);
+const coleccionProductsName = process.env.COLLECTION_NAME_P;
+export const coleccion = () => getDb().collection<Product>(coleccionProductsName as string);
+const coleccionUsers = () => getDb().collection<User>(process.env.COLLECTION_NAME_U as string);
+
 
 //Obtener los productos (con filtro dependiendo de valores introducidos)
 router.get("/", async (req, res) => {
@@ -57,16 +59,20 @@ router.post("/", verifyToken, validateProduct, async (req:authRequest, res) => {
 router.put("/", verifyToken, validateProduct, async (req : authRequest, res) => {
     try {
 
-        const { productoId , name, description } = req.body;
+        const { productId , name, description } = req.body;
         const userId : string = ( req.user as JwtPayload)?.id;
 
         //Comprobar que el  usuario que quiere modificar el producto es el idCreatorUser del producto
-        const usuarioCorrecto = await coleccion().findOne(
-            { _id : new ObjectId(productoId as string) }
+        const usuarioCorrecto = await coleccionUsers().findOne(
+            { _id : new ObjectId(userId as string) }
         );
 
+        const productoAmodificar = await coleccion().findOne({
+            _id: new ObjectId(productId as string)
+        });
+
         //Comprobar que el usuario que quiere modificar el producto es el idCreatorUser del producto
-        if(usuarioCorrecto!.idCreatorUser !== userId){
+        if( productoAmodificar?.idCreatorUser !== usuarioCorrecto?._id.toString()){
             return  res.status(403).json({message : "You are not allowed to modify this product because is not yours"});
         }
 
@@ -74,13 +80,13 @@ router.put("/", verifyToken, validateProduct, async (req : authRequest, res) => 
         //Actualizar el producto
         const productoModificado : Product = {
             idCreatorUser : userId,
-            idsBuyer : usuarioCorrecto?.idsBuyer || [],
-            name : name,
-            description : description
+            idsBuyer : productoAmodificar?.idsBuyer || [],
+            name,
+            description
         };
         
         const result = await coleccion().updateOne(
-            { _id : new ObjectId(productoId as string) },
+            { _id : new ObjectId(productId as string) },
             { $set : productoModificado }
         );
 
@@ -92,27 +98,29 @@ router.put("/", verifyToken, validateProduct, async (req : authRequest, res) => 
 });
 
 //Comprar un producto (añadir un idBuyer al array idsBuyer)
-router.put("/buy", verifyToken, validateBuy, async (req : authRequest, res) => {
+router.put("/buy", verifyToken, validateIdProduct, async (req : authRequest, res) => {
     try {
-        const productoId : string =  req.body.productoId;
+        const { productId } =  req.body;
         const userId: string = (req.user as JwtPayload)?.id;
        
-        //Comprobar si el usuario ya ha comprado el producto
-        const productoComprado =  await coleccion().findOne({
-            _id : new ObjectId (productoId),
-            idsBuyer :  { $in : [userId] } //Comprobar si el id del usuario esta en el array idsBuyer
+
+        const producto = await coleccion().findOne({
+            _id: new ObjectId(productId as string)
         });
 
+         if (producto?.idsBuyer?.includes(userId)) {
+            return res.status(400).json({ message: "You have already bought this product" });
+        }
 
         //Actualizar el producto añadiendo el id del comprador al array idsBuyer
-        const idsBuyerUpdates = [...(productoComprado?.idsBuyer || []), userId]; //Poner ? por si es vacio y en caso vacio poner un array vacio
+        const idsBuyerUpdates = [...(producto?.idsBuyer || []), userId]; //Poner ? por si es vacio y en caso vacio poner un array vacio
   
-        const productAfterBuy = await coleccion().updateOne(
-            {_id : new ObjectId (productoId as string)},
+        await coleccion().updateOne(
+            {_id : new ObjectId (productId as string)},
             {$set : {idsBuyer : idsBuyerUpdates}}
         );
 
-        const updatedProduct = await coleccion().findOne({_id : new ObjectId (productoId)});
+        const updatedProduct = await coleccion().findOne({_id : new ObjectId (productId as string)});
         res.status(200).json({modifiedProduct : updatedProduct});
     } catch (err) {
         res.status(500).json({message : err});
