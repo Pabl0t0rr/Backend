@@ -52,8 +52,12 @@ export const validateData = (email : string, username: string, password : string
     const errors : string[] = [];
 
     if(typeof email !== "string" || email.trim() === "")  errors.push("El email no puede estar vacio o ser distinto de un string");
-    if(typeof username !== "string" || username.trim() === "") errors.push("El campo nombre de usuario no puede estar vacio o ser distinto de un string");
-    if(typeof password !== "string" || password.trim() === "") errors.push("La contraseña no puede estar vacia o ser distinto de un string")
-
+    else {const emailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/; //Validacmos que haya nombre de usuario, '@', dominio y extension con al menos 2 letras
+        if(!emailRegex.test(email)) errors.push("El email no es valido");
+    }
+    if(typeof username !== "string" || username.trim() === ""){ errors.push("El campo nombre de usuario no puede estar vacio o ser distinto de un string");
+    } else if (username.trim().length < 3) { errors.push("El nombre de usuario debe tener al menos 3 caracteres");}
+    if(typeof password !== "string" || password.trim() === ""){ errors.push("La contraseña no puede estar vacia o ser distinto de un string")
+    }else if (password.trim().length < 6) {errors.push("La contraseña debe tener al menos 6 caracteres");}
     return errors;    
 }
