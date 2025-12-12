@@ -1,7 +1,6 @@
 import { ObjectId } from "mongodb";
 import { getDB } from "../db/mongo";
-import { Post } from "../types/post";
-import { dbName, postCollection } from "../utils/utils";
+import { postCollection } from "../utils/utils";
 
 
 export const createPost = async (title: string, content: string, author: string) => { 
@@ -71,4 +70,15 @@ export const validAuthor = async(author : string, idPost : string) => {
 
     return valid ? true : false;     
 };
+
+export const allPosts = async () => {
+    const db = getDB();
+    return await db.collection(postCollection).find().toArray();
+};
+
+export const postById = async (idPost : string) => {
+    const db = getDB();
+    const exist = await db.collection(postCollection).findOne({_id : new ObjectId(idPost)});
+    return exist
+}
 

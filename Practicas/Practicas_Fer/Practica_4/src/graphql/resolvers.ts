@@ -4,12 +4,38 @@ import { IResolvers } from "@graphql-tools/utils";
 //Import controllers
 import { createUser, validateUser, validateUserData, duplicateName } from "../controllers/users.controllers";
 import { signToken } from "../controllers/auth.controllers";
-import { createPost, validatePostData, duplicateTitle, updatePost, titleValid, validAuthor, deletePost, idPostValid} from "../controllers/post.controllers";
+import { createPost, validatePostData, duplicateTitle, updatePost, titleValid, validAuthor, deletePost, idPostValid, allPosts, postById} from "../controllers/post.controllers";
 
 export const resolvers: IResolvers = {
     Query: {
-       
-      
+       userInfo: async(_, __, ctx) => {
+            const user = ctx.user;
+            if(!user) throw new Error("Not authenticated");
+            
+            return {
+                _id : user._id,
+                ...user
+            }
+       },
+
+       allPost: async(_, __, ctx) => {
+            const user = ctx.user;
+            if(!user) throw new Error("Not authenticated");
+
+            return await allPosts();
+       },
+
+       postById: async (_, {idPost} : {idPost : string}, ctx) => {
+            const user = ctx.user;
+            if(!user) throw new Error("Not authenticated");
+            
+            //Comprobar que el idPost existe
+            const validId = await idPostValid(idPost);
+            if(!validId)throw new Error ("idPost does not exist");
+
+            //Devolver el post que coincida con el id
+            return postById(idPost);
+       }
     },
 
     Mutation: { //Finalizadas las mutaciones con todas las funciones para poder realizar las comprobaciones
@@ -87,7 +113,7 @@ export const resolvers: IResolvers = {
             const validId = await idPostValid(idPost);
             if(!validId)throw new Error ("idPost does not exist");
             
-            const result = deletePost(idPost);
+            const result = await deletePost(idPost);
 
             return result;
         }
