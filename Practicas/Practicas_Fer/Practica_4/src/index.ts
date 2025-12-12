@@ -5,7 +5,7 @@ import { ApolloServer } from "apollo-server";
 import { connectMongoDB, closeMongoDB } from "./db/mongo"
 import { typeDefs } from "./graphql/schema";
 import { resolvers } from "./graphql/resolvers";
-import { getUserToken } from "./utils/auth";
+import { getUserToken } from "./controllers/auth.controllers";
 
 //Import environment variables
 import dotenv from "dotenv";

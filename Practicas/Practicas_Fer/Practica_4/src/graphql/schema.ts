@@ -15,42 +15,14 @@ export const typeDefs = gql`
         _id: ID!,
         title: String!,
         content: String,
-        author: User,
-        createdAt: String!,
-        modifiedAt: String!
+        author: ID!,
+        createdAt: String,
+        updatedAt: String
     }
 
-    type AuthPayload {
+    type Register {
         token: String!,
-        user: User!,
-    }
-
-    input RegisterInput {
-        username: String!,
-        email: String!,
-        password: String!,
-        
-    }
-
-    input LoginInput {
-        username: String!,
-        email: String!,
-        password: String!,
-    }
-
-    input CreatePostInput {
-        title: String!,
-        content: String!,
-    }
-
-    input updatePostInput {
-        idToUpdated: ID!,
-        title: String!,
-        content: String!,
-    }
-
-    input deletePostInput {
-        deletedid: ID!
+        userInfo: User!
     }
 
     type Query {
@@ -60,11 +32,11 @@ export const typeDefs = gql`
     }
 
     type Mutation {
-        register(input: RegisterInput!): AuthPayload,
-        login(input: LoginInput!): AuthPayload!,
-        createPost(input: CreatePostInput!): Post!,
-        updatePost(input: updatePostInput!): Post!,
-        deletePost(input: deletePostInput!): Boolean!,
+        register(username: String!, email: String!, password: String!): Register!,
+        login(email: String!, password: String!, username: String!): String!,
+        createPost(title: String!, content: String): Post!,
+        updatePost(idPost: ID!,title: String!, content: String): Post!,
+        deletePost(idPost: ID!): Boolean!,
     }
 
 `

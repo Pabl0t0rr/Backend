@@ -1,26 +1,10 @@
 //Imports basics
-import { ObjectId } from "mongodb";
-import { getDB } from "../db/mongo"
 import { IResolvers } from "@graphql-tools/utils";
 
-//Import types
-import { Post } from "../types/post";
-import { User } from "../types/users";
-
-//Import utils
-import { createUser, validateUser, validateData } from "../utils/users";
-import { signToken } from "../utils/auth";
-
-//Import environment variables
-import dotenv from "dotenv";
-
-
-//Variables para escalabilidad mas accesible
-const cole_User = process.env.COLLECTION_NAME_U as string;
-const cole_Post = process.env.COLLECTION_NAME_P as string;
-
-
-dotenv.config();
+//Import controllers
+import { createUser, validateUser, validateUserData, duplicateName } from "../controllers/users.controllers";
+import { signToken } from "../controllers/auth.controllers";
+import { createPost, validatePostData, duplicateTitle, updatePost, titleValid, validAuthor, deletePost, idPostValid} from "../controllers/post.controllers";
 
 export const resolvers: IResolvers = {
     Query: {
@@ -28,43 +12,84 @@ export const resolvers: IResolvers = {
       
     },
 
-    Mutation: {
-        //Funciona
-        // login_: async (_, {input} : {input: {email: string, password: string, username: string}} ) => {
-        //     const user = await validateUser(input.email, input.password, input.username);
-        //     if(!user) throw new Error("Invalid credentials");
-        //     return {
-        //         token: signToken(user._id.toString()),
-        //         user,
-        //     }
-        // },
-
-        register: async(_, {input} : {input : {email: string, password: string, username: string}}) => {
+    Mutation: { //Finalizadas las mutaciones con todas las funciones para poder realizar las comprobaciones
+        register: async(_, {email, password, username} : {email: string, password: string, username: string}) => {
             //Comprobar que lo que se inserta son valores validos
-            const validate = validateData(input.email, input.username, input.password)
+            const validate = validateUserData(email, username, password)
             if(validate.length > 0) throw new Error(validate.join(" | ")) //Comporbacion basica de los parametros
 
-            //Comprobar si ya existe un usuario con ese nombre o correo
-            const userExist = await getDB()
-            .collection<User>(cole_User)
-            .findOne({$or : [
-                {email : input.email},
-                {username: input.username}
-            ]});
+            //Comprobar si ya existe un usuario con ese nombre
+            const existName =  await duplicateName(username)
+            if(existName)throw new Error("This name is alredy use");
 
-            if(userExist) return new Error("Usuario con ese correo o nombre ya esta creado");
-            
-            const user = await createUser(input.email, input.username, input.password);
+            const user = await createUser(email, username, password);
 
             return {
                 token: signToken(user._id.toString()),
-                user
+                userInfo : user
             }
         },   
         
-        login: async(_, {input} : {input : {username : string, email: string, password: string}}) => {
-             
+        login: async(_, {email, password, username} : {email: string, password: string, username: string}) => {
+             const exist = await validateUser(email, password , username);
+             if(!exist) throw new Error ("Invalid acces info");
 
+             return signToken(exist._id.toString())
         },
+
+        createPost: async (_,{title, content}: {title : string, content : string}, ctx) => {
+            const user = ctx.user
+            if(!user) throw new Error("Not authenticated");
+            
+            //Validar los datos de entrada
+            const validate =  validatePostData(title, content);
+            if(validate.length> 0) throw new Error( validate.join(" | "));
+
+            //Comprobar qeu el nombre que s ele pone no exista
+            const duplicate = await duplicateTitle(title);
+            if(duplicate) throw new Error("There is already a post with that title");
+            
+            const post =  await createPost(title, content, user._id);
+
+            return post;
+        },
+
+        updatePost: async(_,{idPost,title, content}: {idPost : string,title : string, content : string}, ctx) => {
+            const user = ctx.user;
+            if(!user) throw new Error("Not authenticated");
+
+            //Comprobar si es el author
+            const author =  await validAuthor(user._id.toString(), idPost);
+            if(!author) throw new Error("You are not the author to modified");
+            
+            //Comprobar que el idPost existe
+            const validId = await idPostValid(idPost);
+            if(!validId)throw new Error ("idPost does not exist");
+
+            //validar que los campos sean correctos
+            const validate =  validatePostData(title, content);
+            if(validate.length> 0) throw new Error( validate.join(" | "));
+
+            //Comprobar que el titulo que se ponga no esta usado
+            const duplicate = await titleValid(title, idPost);
+            if(duplicate) throw new Error("There is already a post with that title");
+            
+            const post = await updatePost(idPost,title, content);
+
+            return post;
+        },
+
+        deletePost: async(_,{idPost} : {idPost : string}, ctx) => {
+            const user = ctx.user;
+            if(!user) throw new Error("Not authenticated");
+
+            //Comprobar que el idPost existe
+            const validId = await idPostValid(idPost);
+            if(!validId)throw new Error ("idPost does not exist");
+            
+            const result = deletePost(idPost);
+
+            return result;
+        }
     },
 };

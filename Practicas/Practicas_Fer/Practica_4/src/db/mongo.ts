@@ -1,15 +1,11 @@
 //Imports basics
 import { Db, MongoClient } from "mongodb";
 
-//Import environment variables
-import dotenv from "dotenv";
-
-dotenv.config();
+//Import Utils
+import { dbName } from "../utils/utils";
 
 let client: MongoClient;
 let dB: Db;
-
-const dbName = process.env.DB_NAME;
 
 export const connectMongoDB = async (): Promise<void> => {
   try {
