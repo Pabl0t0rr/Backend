@@ -109,6 +109,10 @@ export const resolvers: IResolvers = {
             const user = ctx.user;
             if(!user) throw new Error("Not authenticated");
 
+            //Comprobar si es el author
+            const author =  await validAuthor(user._id.toString(), idPost);
+            if(!author) throw new Error("You are not the author to modified");
+
             //Comprobar que el idPost existe
             const validId = await idPostValid(idPost);
             if(!validId)throw new Error ("idPost does not exist");
