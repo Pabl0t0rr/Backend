@@ -5,7 +5,6 @@ export enum CourseLevel {
 }
 
 export enum OrganicerRole {
-  ORGANIZER = "ORGANIZER",
-  REVIEWER = "REVIEWER",
+  ORGANICER = "ORGANICER",
   TEACHER = "TEACHER",
 }

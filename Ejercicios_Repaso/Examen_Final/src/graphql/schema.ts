@@ -7,6 +7,8 @@ export const typeDefs = gql`
 type Organicer {
   _id: ID!,
   name: String!,
+  email: String!
+  password: String!,
   role: OrganicerRole!,
   createdAt: String!
 }
@@ -48,13 +50,19 @@ enum CourseLevel {
 }
 
 enum OrganicerRole {
-  ORGANIZER
-  REVIEWER
+  ORGANICER
   TEACHER
+}
+
+input LoginUserInput {
+  email: String!
+  password: String!
 }
 
 input CreateOrganicerInput {
   name: String!,
+  email: String!,
+  password: String!,
   role: OrganicerRole!
 }
 
@@ -83,6 +91,11 @@ input CreateReviewInput {
   courseId: ID!
 }
 
+input PaginationInput {
+  page: Int = 1
+  limit: Int = 10
+}
+
 
 type Query {
   organicers: [Organicer!]!
@@ -100,7 +113,9 @@ type Query {
 
 type Mutation {
   createOrganicer(input: CreateOrganicerInput!):Organicer! 
+  loginOrganicer(input: LoginUserInput!): String!
   createStudent(input: CreateStudentInput!): Student!
+  loginStudent(input: LoginUserInput!): String!
   createCourse(input: CreateCourseInput!): Course!
   enrollUser(input: EnrollUserInput!): Course!
   createReview(input: CreateReviewInput!): Review!
