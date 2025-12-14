@@ -10,9 +10,9 @@ import { Course } from "../types/course";
 import { Review } from "../types/review";
 
 //Import controllers
-import { allOrganicers, createOrganicer, duplicateEmail, organicerById, validateOrganicer, validateOrganicerRole } from "../controllers/organicer.controllers";
+import { allOrganicers, createOrganicer, duplicateEmailO, organicerById, validateOrganicer, validateOrganicerRole } from "../controllers/organicer.controllers";
 import { signToken } from "../controllers/auth.controllers";
-import { createStudent } from "../controllers/student.controllers";
+import { createStudent, duplicatedEmailS, validateStudent } from "../controllers/student.controllers";
 
 //Import Utils
 import { courseCollection, reviewCollection, studentCollection } from "../utils/utils";
@@ -59,7 +59,6 @@ export const resolvers: IResolvers = {
             const objectIds = listaIdsReviews.map((id) => new ObjectId(id));
             return db.collection(courseCollection).find({_id :{$in : objectIds}}).toArray();
        }
-
     },
     
     Review: {
@@ -71,6 +70,16 @@ export const resolvers: IResolvers = {
             const objecId = new ObjectId(author);
 
             return await db.collection(reviewCollection).findOne({_id : objecId});
+        },
+
+        course: async(parent : Review) => {
+            const db = getDB();
+            const course = parent.course;
+            if(!course) return null;
+
+            const objectId = new ObjectId(course);
+
+            return await db.collection(reviewCollection).findOne({_id : objectId});        
         }
     },
 
@@ -101,9 +110,9 @@ export const resolvers: IResolvers = {
 
     },
     Mutation: {
-        createOrganicer: async(_, {input} : {input :{name : string, email : string,password: string, role : OrganicerRole}}, ctx) => {
+        createOrganicer: async(_, {input} : {input :{name : string, email : string,password: string, role : OrganicerRole}}) => {
             //Create the organizer
-            const validEmail = await duplicateEmail(input.email);
+            const validEmail = await duplicateEmailO(input.email);
             if(!validEmail) throw new Error("Can not use that email");
             
             const organizer =  await createOrganicer(input.name, input.email, input.password, input.role);
@@ -112,9 +121,10 @@ export const resolvers: IResolvers = {
             return organizer
         },
 
-        loginOrganicer: async(_, {input} : {input :{email: string, password: string}}, ctx) => {
+        loginOrganicer: async(_, {input} : {input :{email: string, password: string}}) => {
             const organicer = await validateOrganicer(input.email, input.password);
             if(!organicer) throw new Error("Invalid credentials");
+            
             return signToken(organicer._id.toString() as string)
         },
 
@@ -125,6 +135,9 @@ export const resolvers: IResolvers = {
             const validUserCreate = await validateOrganicerRole(user._id);
             if(!validUserCreate) throw new Error("You can not create an student");
 
+            const duplicated = await duplicatedEmailS(input.email);
+            if(!duplicated) throw new Error("Existing email");
+
             const student = await createStudent(input.name, input.email,input.password)
             if(!student) throw new Error ("Fail to create an student account");
 
@@ -132,7 +145,10 @@ export const resolvers: IResolvers = {
         },
 
         loginStudent: async(_, {input} : {input :{email: string, password: string}}, ctx) => {
+            const student = await validateStudent(input.email, input.password);
+            if(!student) throw new Error("Invalid credential");
 
+            return signToken(student._id.toString() as string);
         },
 
         createCourse: async(_, {input} : {input : {title: string, description: string, level: CourseLevel, intructorId: ObjectId}}, ctx) => {

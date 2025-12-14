@@ -1,7 +1,7 @@
 import { OrganicerRole } from "./enums";
 
 export type Organicers = {
-  id: string,
+  _id: string,
   name: string,
   email: string,
   password: string,

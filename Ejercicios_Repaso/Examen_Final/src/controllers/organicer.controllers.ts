@@ -50,7 +50,7 @@ export const validateOrganicer = async (email : string, password :string) => {
     return organicer;
 }
 
-export const duplicateEmail = async (email : string) => {
+export const duplicateEmailO = async (email : string) => {
     const db = getDB();
     const valid = await db.collection(organicerCollection).findOne({email: email});
     return valid ? false : true;

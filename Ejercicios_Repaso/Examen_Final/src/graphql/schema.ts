@@ -14,7 +14,7 @@ type Organicer {
 }
 
 type Student {
-  id: ID!
+  _id: ID!
   name: String!
   email: String!
   password: String!
@@ -23,7 +23,7 @@ type Student {
 }
 
 type Course {
-  id: ID!
+  _id: ID!
   title: String!
   description: String!
   level: CourseLevel!
@@ -35,7 +35,7 @@ type Course {
 }
 
 type Review {
-  id: ID!
+  _id: ID!
   rating: Int!
   comment: String
   createdAt: String!
