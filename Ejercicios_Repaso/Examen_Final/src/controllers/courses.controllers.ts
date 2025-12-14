@@ -1,7 +1,7 @@
 import { getDB } from "../db/mongo";
 import { ObjectId } from "mongodb";
 import { CourseLevel } from "../types/enums";
-import { courseCollection } from "../utils/utils";
+import { courseCollection, studentCollection } from "../utils/utils";
 
 
 export const createCourse = async (title : string, description : string, level : CourseLevel, teachers: string []) => {
@@ -40,3 +40,18 @@ export const courseById = async (idCourse : string) => {
     const course = await db.collection(courseCollection).findOne({_id : new ObjectId(idCourse)});
     return course;
 }
+
+export const enrolledStudentCourses = async (idStudent : string, courseId : string) => {
+    const db = getDB();
+    const updatedCourse = await db.collection(courseCollection).updateOne(
+        {_id : new ObjectId(courseId)},
+        {$addToSet : { students : idStudent}});
+
+    const updatedStudent = await db.collection(studentCollection).updateOne(
+        {_id : new ObjectId(idStudent)},
+        {$addToSet: {enrolledCourses : courseId}});
+
+     const result = await db.collection(courseCollection).findOne({_id : new ObjectId(courseId)});   
+    return result;
+     
+};

@@ -13,7 +13,7 @@ import { Review } from "../types/review";
 import { allOrganicers, createOrganicer, duplicateEmailO, organicerById, validateOrganicer, validateOrganicerRole } from "../controllers/organicer.controllers";
 import { signToken } from "../controllers/auth.controllers";
 import { createStudent, duplicatedEmailS, validateStudent, allStudents, studentById } from "../controllers/student.controllers";
-import { createCourse, allCourses, courseById } from "../controllers/courses.controllers";
+import { createCourse, allCourses, courseById, enrolledStudentCourses } from "../controllers/courses.controllers";
 
 //Import Utils
 import { courseCollection, organicerCollection, reviewCollection, studentCollection } from "../utils/utils";
@@ -162,9 +162,15 @@ export const resolvers: IResolvers = {
             const course = await createCourse(input.title, input.description, input.level, input.teachers);
             return course;    
         },
-        
-        enrollStudent: async(_, {input} : {input : {}}, ctx) => {
 
+        enrollStudent: async(_, {input} : {input : {courseId : string}}, ctx) => {
+            const user = ctx.user;
+            if(!user) throw new Error ("Not authenticated");
+
+            //validate role
+            const enrolledCourses = await enrolledStudentCourses(user._id, input.courseId);
+            
+            return enrolledCourses;
         },
 
         createReview: async(_, {input} : {input : {}}, ctx) => {

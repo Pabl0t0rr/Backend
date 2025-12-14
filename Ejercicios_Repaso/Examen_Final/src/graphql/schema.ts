@@ -80,7 +80,6 @@ input CreateCourseInput {
 }
 
 input EnrollUserInput {
-  userId: ID!
   courseId: ID!
 }
 
