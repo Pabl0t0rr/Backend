@@ -131,7 +131,6 @@ type Query {
 
   reviews(input: PaginationInput = {}) : ReviewPagination!
   review(idReview: ID!): Review!
-  avgRating: Float!
 }
 
 type Mutation {

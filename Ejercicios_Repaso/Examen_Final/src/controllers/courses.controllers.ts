@@ -15,7 +15,6 @@ export const createCourse = async (title : string, description : string, level :
         teachers : teachers,
         students : [],
         reviews : [],
-        averageRating : 0.0 
     })
 
     const result = await db.collection(courseCollection).findOne({_id : course.insertedId});
@@ -55,3 +54,8 @@ export const enrolledStudentCourses = async (idStudent : string, courseId : stri
     return result;
 
 };
+
+export const avgRating = async () => {
+    const db = getDB();
+
+}

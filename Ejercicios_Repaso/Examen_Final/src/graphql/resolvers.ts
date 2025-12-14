@@ -59,6 +59,19 @@ export const resolvers: IResolvers = {
 
             const objectIds = listaIdsReviews.map((id) => new ObjectId(id));
             return db.collection(reviewCollection).find({_id :{$in : objectIds}}).toArray();
+       },
+
+       averageRating: async (parent : Course) => {
+        const db = getDB();
+        const listaIdsReviews = parent.reviews;
+        if(!listaIdsReviews) return null;
+
+        const objectIds = listaIdsReviews.map((id) => new ObjectId(id));
+        const reviews = await db.collection(reviewCollection).find({_id : {$in : objectIds}}).toArray();
+        if(reviews.length === 0) return null;
+
+        const totalRating = reviews.reduce((acc, review) => acc + review.rating, 0);
+        return totalRating / reviews.length;
        }
     },
     
@@ -115,12 +128,7 @@ export const resolvers: IResolvers = {
 
         review: (_,{idReview} : {idReview : string}) => {
             return reviewById(idReview);
-        },
-
-        avgRating: () => {
-
         }
-
     },
 
     Mutation: {
