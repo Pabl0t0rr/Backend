@@ -12,7 +12,7 @@ import { Review } from "../types/review";
 //Import controllers
 import { allOrganicers, createOrganicer, duplicateEmailO, organicerById, validateOrganicer, validateOrganicerRole } from "../controllers/organicer.controllers";
 import { signToken } from "../controllers/auth.controllers";
-import { createStudent, duplicatedEmailS, validateStudent } from "../controllers/student.controllers";
+import { createStudent, duplicatedEmailS, validateStudent, allStudents, studentById } from "../controllers/student.controllers";
 
 //Import Utils
 import { courseCollection, reviewCollection, studentCollection } from "../utils/utils";
@@ -92,12 +92,12 @@ export const resolvers: IResolvers = {
             return organicerById(idOrganicer as string);
         },
 
-        students: async (_, __) => {
-
+        students: async (_, {input} :{input: {page: number, limit: number}}) => {
+            return allStudents(input.page, input.limit);
         },
 
-        student : async (_, __, ctx) => {
-
+        student : async (_, {idStudent} : {idStudent : string}) => {
+            return studentById(idStudent);
         },
 
         courses: async(_, __) => {
@@ -109,6 +109,7 @@ export const resolvers: IResolvers = {
         },
 
     },
+
     Mutation: {
         createOrganicer: async(_, {input} : {input :{name : string, email : string,password: string, role : OrganicerRole}}) => {
             //Create the organizer

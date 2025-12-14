@@ -38,16 +38,27 @@ export const validateStudent = async (email : string, password : string) => {
     return user;
 };
 
-//Encontrar student por id
-export const findStudentById = async (id : string) => {
-    const db = getDB();
-    return await db.collection(studentCollection).findOne({ _id: new ObjectId(id) });
-};
-
-
 export const duplicatedEmailS = async (email : string) => {
     const db = getDB();
     const valid = await db.collection(studentCollection).findOne({email : email});
     return valid ? false : true;
+};
+
+export const allStudents = async ( page : number , limit : number) => {
+        const db = getDB();
+        const students = await db.collection(studentCollection).find().skip((page - 1) * limit).limit(limit).toArray();
+        return {
+            info : {
+                page,
+                limit
+            },
+            result: students
+        };
+}; 
+
+//Encontrar student por id
+export const studentById = async (id : string) => {
+    const db = getDB();
+    return await db.collection(studentCollection).findOne({ _id: new ObjectId(id) });
 };
 

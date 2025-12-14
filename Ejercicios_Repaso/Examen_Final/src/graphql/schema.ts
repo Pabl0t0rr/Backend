@@ -43,11 +43,6 @@ type Review {
   course: Course!
 }
 
-type PaginationInfo {
-  page: Int!
-  limit: Int!
-}
-
 enum CourseLevel {
   BEGINNER
   INTERMEDIATE
@@ -101,16 +96,26 @@ input PaginationInput {
   limit: Int = 10
 }
 
+type PaginationInfo {
+  page: Int!
+  limit: Int!
+}
+
 type OrganicerPagination {
   info: PaginationInfo!
   results: [Organicer!]!
+}
+
+type StudentPagination {
+  info:  PaginationInfo!,
+  result: [Student!]!
 }
 
 type Query {
   organicers(input: PaginationInput = {}): OrganicerPagination!
   organicer(idOrganicer: ID!): Organicer
 
-  students: [Student!]!
+  students(input: PaginationInput = {}) : StudentPagination!
   student(idStudent: ID!): Student
 
   courses: [Course!]!
