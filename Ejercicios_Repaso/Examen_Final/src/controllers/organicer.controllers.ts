@@ -4,10 +4,16 @@ import bcrypt from "bcryptjs";
 import { organicerCollection } from "../utils/utils";
 import { OrganicerRole } from "../types/enums";
 
-export const allOrganicers = async() => {
+export const allOrganicers = async(page : number, limit : number) => {
     const db = getDB();
-    const organicers = await db.collection(organicerCollection).find().toArray();
-    return organicers;
+    const organicers = await db.collection(organicerCollection).find().skip((page - 1) * limit).limit(limit).toArray();
+    return {
+        info : {
+            page,
+            limit
+        },
+        results: organicers
+    };
 };
 
 export const organicerById = async (id: string) => {

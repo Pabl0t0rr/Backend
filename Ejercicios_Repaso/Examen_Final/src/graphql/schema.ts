@@ -28,7 +28,7 @@ type Course {
   description: String!
   level: CourseLevel!
   createdAt: String!
-  instructor: Organicer!
+  teachers: [Organicer]!
   students: [Student!]!
   reviews: [Review!]!
   averageRating: Float
@@ -41,6 +41,11 @@ type Review {
   createdAt: String!
   author: Student!
   course: Course!
+}
+
+type PaginationInfo {
+  page: Int!
+  limit: Int!
 }
 
 enum CourseLevel {
@@ -76,7 +81,7 @@ input CreateCourseInput {
   title: String!
   description: String!
   level: CourseLevel!
-  instructorId: ID!
+  teacherId: ID!
 }
 
 input EnrollUserInput {
@@ -96,9 +101,13 @@ input PaginationInput {
   limit: Int = 10
 }
 
+type OrganicerPagination {
+  info: PaginationInfo!
+  results: [Organicer!]!
+}
 
 type Query {
-  organicers: [Organicer!]!
+  organicers(input: PaginationInput = {}): OrganicerPagination!
   organicer(idOrganicer: ID!): Organicer
 
   students: [Student!]!

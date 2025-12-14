@@ -1,26 +1,82 @@
 //import basics
 import { IResolvers } from "@graphql-tools/utils";
 import { ObjectId } from "mongodb";
+import { getDB } from "../db/mongo";
 
 //import types
 import { CourseLevel, OrganicerRole } from "../types/enums";
 import { Student } from "../types/student";
+import { Course } from "../types/course";
+import { Review } from "../types/review";
 
 //Import controllers
 import { allOrganicers, createOrganicer, duplicateEmail, organicerById, validateOrganicer, validateOrganicerRole } from "../controllers/organicer.controllers";
 import { signToken } from "../controllers/auth.controllers";
 import { createStudent } from "../controllers/student.controllers";
 
+//Import Utils
+import { courseCollection, reviewCollection, studentCollection } from "../utils/utils";
+
+
 export const resolvers: IResolvers = {
     Student: {
         enrolledCourses: async (parent : Student) => {
+            const db = getDB();
+            const listaIdsCourses = parent.enrolledCourses;
+            if(!listaIdsCourses) return [];
+            
+            const objectIds = listaIdsCourses.map((id) => new ObjectId(id));
+            return db.collection(studentCollection).find({_id : {$in : objectIds}}).toArray();
+        },  
+    },
 
-        }
+    Course: {
+        teachers: async(parent : Course) => {
+            const db = getDB();
+            const listaIdsIntructors = parent.teacher;
+            if(!listaIdsIntructors) return [];
+
+            const objectIds = listaIdsIntructors.map((id) => new ObjectId(id));
+            
+            return db.collection(courseCollection).find({_id : {$in : objectIds}}).toArray();;
+        },
+
+        students: async (parent : Course) => {
+            const db = getDB();
+            const listaIdsStudent = parent.students;
+            if(!listaIdsStudent) return [];
+
+            const objectIds = listaIdsStudent.map((id) => new ObjectId(id));
+            
+            return db.collection(courseCollection).find({_id : {$in : objectIds}}).toArray();
+       },
+
+       reviews: async (parent : Course) => {
+            const db = getDB();
+            const listaIdsReviews = parent.reviews;
+            if(!listaIdsReviews)return []
+
+            const objectIds = listaIdsReviews.map((id) => new ObjectId(id));
+            return db.collection(courseCollection).find({_id :{$in : objectIds}}).toArray();
+       }
+
     },
     
+    Review: {
+        author: async(parent: Review) => {
+            const db = getDB();
+            const author = parent.author;
+            if(!author) return null;
+
+            const objecId = new ObjectId(author);
+
+            return await db.collection(reviewCollection).findOne({_id : objecId});
+        }
+    },
+
     Query: {
-        organicers:async () => {
-            return allOrganicers();
+        organicers:async (_, {input} :{input: {page: number, limit: number}}) => {
+            return allOrganicers(input.page, input.limit);
         },
 
         organicer: async (_, {idOrganicer}:{idOrganicer: string}) => {
