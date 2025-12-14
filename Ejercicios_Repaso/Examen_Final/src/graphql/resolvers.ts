@@ -14,6 +14,7 @@ import { allOrganicers, createOrganicer, duplicateEmailO, organicerById, validat
 import { signToken } from "../controllers/auth.controllers";
 import { createStudent, duplicatedEmailS, validateStudent, allStudents, studentById } from "../controllers/student.controllers";
 import { createCourse, allCourses, courseById, enrolledStudentCourses } from "../controllers/courses.controllers";
+import {validUser, createReview, reviewById, allReviews} from "../controllers/review.controllers"
 
 //Import Utils
 import { courseCollection, organicerCollection, reviewCollection, studentCollection } from "../utils/utils";
@@ -108,6 +109,18 @@ export const resolvers: IResolvers = {
             return courseById(idCourse);
         },
 
+        reviews: (_, {input} :{input: {page: number, limit: number}}) => {
+            return allReviews(input.page, input.limit);
+        },
+
+        review: (_,{idReview} : {idReview : string}) => {
+            return reviewById(idReview);
+        },
+
+        avgRating: () => {
+
+        }
+
     },
 
     Mutation: {
@@ -173,8 +186,16 @@ export const resolvers: IResolvers = {
             return enrolledCourses;
         },
 
-        createReview: async(_, {input} : {input : {}}, ctx) => {
+        createReview: async(_, {input} : {input : {rating : number, comment : string, courseId : string}}, ctx) => {
+            const user = ctx.user;
+            if(!user) throw new Error("Not authenticated");
 
+            const valid = await validUser(user._id);
+            if(!valid) throw new Error("You can not write a review");
+
+            const review = await createReview(user._id, input.rating, input.comment, input.courseId);
+
+            return review;
         },
 
     }

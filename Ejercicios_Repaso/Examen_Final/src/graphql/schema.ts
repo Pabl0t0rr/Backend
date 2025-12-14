@@ -114,6 +114,11 @@ type CoursePagination {
   results: [Course!]!
 }
 
+type ReviewPagination{
+  info: PaginationInfo,
+  results: [Review!]!
+}
+
 type Query {
   organicers(input: PaginationInput = {}): OrganicerPagination!
   organicer(idOrganicer: ID!): Organicer
@@ -124,8 +129,9 @@ type Query {
   courses(input: PaginationInput = {}) : CoursePagination!
   course(idCourse: ID!): Course
 
-  reviews: [Review!]!
+  reviews(input: PaginationInput = {}) : ReviewPagination!
   review(idReview: ID!): Review!
+  avgRating: Float!
 }
 
 type Mutation {

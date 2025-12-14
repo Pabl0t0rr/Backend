@@ -53,5 +53,5 @@ export const enrolledStudentCourses = async (idStudent : string, courseId : stri
 
      const result = await db.collection(courseCollection).findOne({_id : new ObjectId(courseId)});   
     return result;
-     
+
 };
