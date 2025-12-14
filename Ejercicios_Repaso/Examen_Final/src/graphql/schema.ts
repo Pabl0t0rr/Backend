@@ -5,11 +5,11 @@ export const typeDefs = gql`
 
 
 type Organicer {
-  _id: ID!,
-  name: String!,
+  _id: ID!
+  name: String!
   email: String!
-  password: String!,
-  role: OrganicerRole!,
+  password: String!
+  role: OrganicerRole!
   createdAt: String!
 }
 
@@ -60,9 +60,9 @@ input LoginUserInput {
 }
 
 input CreateOrganicerInput {
-  name: String!,
-  email: String!,
-  password: String!,
+  name: String!
+  email: String!
+  password: String!
   role: OrganicerRole!
 }
 
@@ -76,7 +76,7 @@ input CreateCourseInput {
   title: String!
   description: String!
   level: CourseLevel!
-  teacherId: ID!
+  teachers: [ID!]!
 }
 
 input EnrollUserInput {
@@ -87,7 +87,6 @@ input EnrollUserInput {
 input CreateReviewInput {
   rating: Int!
   comment: String
-  authorId: ID!
   courseId: ID!
 }
 
@@ -108,7 +107,12 @@ type OrganicerPagination {
 
 type StudentPagination {
   info:  PaginationInfo!,
-  result: [Student!]!
+  results: [Student!]!
+}
+
+type CoursePagination {
+  info: PaginationInfo!
+  results: [Course!]!
 }
 
 type Query {
@@ -118,7 +122,7 @@ type Query {
   students(input: PaginationInput = {}) : StudentPagination!
   student(idStudent: ID!): Student
 
-  courses: [Course!]!
+  courses(input: PaginationInput = {}) : CoursePagination!
   course(idCourse: ID!): Course
 
   reviews: [Review!]!
@@ -131,7 +135,7 @@ type Mutation {
   createStudent(input: CreateStudentInput!): Student!
   loginStudent(input: LoginUserInput!): String!
   createCourse(input: CreateCourseInput!): Course!
-  enrollUser(input: EnrollUserInput!): Course!
+  enrollStudent(input: EnrollUserInput!): Course!
   createReview(input: CreateReviewInput!): Review!
 }
 `

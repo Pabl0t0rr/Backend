@@ -52,7 +52,7 @@ export const allStudents = async ( page : number , limit : number) => {
                 page,
                 limit
             },
-            result: students
+            results: students
         };
 }; 
 

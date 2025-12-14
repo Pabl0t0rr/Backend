@@ -13,10 +13,10 @@ import { Review } from "../types/review";
 import { allOrganicers, createOrganicer, duplicateEmailO, organicerById, validateOrganicer, validateOrganicerRole } from "../controllers/organicer.controllers";
 import { signToken } from "../controllers/auth.controllers";
 import { createStudent, duplicatedEmailS, validateStudent, allStudents, studentById } from "../controllers/student.controllers";
+import { createCourse, allCourses, courseById } from "../controllers/courses.controllers";
 
 //Import Utils
-import { courseCollection, reviewCollection, studentCollection } from "../utils/utils";
-
+import { courseCollection, organicerCollection, reviewCollection, studentCollection } from "../utils/utils";
 
 export const resolvers: IResolvers = {
     Student: {
@@ -26,19 +26,19 @@ export const resolvers: IResolvers = {
             if(!listaIdsCourses) return [];
             
             const objectIds = listaIdsCourses.map((id) => new ObjectId(id));
-            return db.collection(studentCollection).find({_id : {$in : objectIds}}).toArray();
+            return db.collection(courseCollection).find({_id : {$in : objectIds}}).toArray();
         },  
     },
 
     Course: {
         teachers: async(parent : Course) => {
             const db = getDB();
-            const listaIdsIntructors = parent.teacher;
+            const listaIdsIntructors = parent.teachers;
             if(!listaIdsIntructors) return [];
 
             const objectIds = listaIdsIntructors.map((id) => new ObjectId(id));
             
-            return db.collection(courseCollection).find({_id : {$in : objectIds}}).toArray();;
+            return db.collection(organicerCollection).find({_id : {$in : objectIds}}).toArray();;
         },
 
         students: async (parent : Course) => {
@@ -48,7 +48,7 @@ export const resolvers: IResolvers = {
 
             const objectIds = listaIdsStudent.map((id) => new ObjectId(id));
             
-            return db.collection(courseCollection).find({_id : {$in : objectIds}}).toArray();
+            return db.collection(studentCollection).find({_id : {$in : objectIds}}).toArray();
        },
 
        reviews: async (parent : Course) => {
@@ -57,7 +57,7 @@ export const resolvers: IResolvers = {
             if(!listaIdsReviews)return []
 
             const objectIds = listaIdsReviews.map((id) => new ObjectId(id));
-            return db.collection(courseCollection).find({_id :{$in : objectIds}}).toArray();
+            return db.collection(reviewCollection).find({_id :{$in : objectIds}}).toArray();
        }
     },
     
@@ -69,7 +69,7 @@ export const resolvers: IResolvers = {
 
             const objecId = new ObjectId(author);
 
-            return await db.collection(reviewCollection).findOne({_id : objecId});
+            return await db.collection(studentCollection).findOne({_id : objecId});
         },
 
         course: async(parent : Review) => {
@@ -79,7 +79,7 @@ export const resolvers: IResolvers = {
 
             const objectId = new ObjectId(course);
 
-            return await db.collection(reviewCollection).findOne({_id : objectId});        
+            return await db.collection(courseCollection).findOne({_id : objectId});        
         }
     },
 
@@ -100,12 +100,12 @@ export const resolvers: IResolvers = {
             return studentById(idStudent);
         },
 
-        courses: async(_, __) => {
-
+        courses: async(_, {input} :{input: {page: number, limit: number}}) => {
+            return allCourses(input.page, input.limit);
         },
 
-        course: async(_, {id} : {id : string}) => {
-
+        course: async(_, {idCourse} : {idCourse : string}) => {
+            return courseById(idCourse);
         },
 
     },
@@ -152,10 +152,18 @@ export const resolvers: IResolvers = {
             return signToken(student._id.toString() as string);
         },
 
-        createCourse: async(_, {input} : {input : {title: string, description: string, level: CourseLevel, intructorId: ObjectId}}, ctx) => {
+        createCourse: async(_, {input} : {input : {title: string, description: string, level: CourseLevel, teachers: string []}}, ctx) => {
+            const user = ctx.user;
+            if(!user) throw new Error ("Not authenticated");
 
+            const validRole = await validateOrganicerRole(user._id);
+            if(!validRole) throw new Error("You can not create a course")
+
+            const course = await createCourse(input.title, input.description, input.level, input.teachers);
+            return course;    
         },
-        enrollUser: async(_, {input} : {input : {}}, ctx) => {
+        
+        enrollStudent: async(_, {input} : {input : {}}, ctx) => {
 
         },
 

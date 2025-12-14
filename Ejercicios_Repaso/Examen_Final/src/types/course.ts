@@ -7,7 +7,7 @@ export  type Course = {
     description: string,
     level: CourseLevel,
     createdAt: Date,
-    teacher: string [],
+    teachers: string [],
     students : string [],
     reviews: string [],
     averageRating?: number
