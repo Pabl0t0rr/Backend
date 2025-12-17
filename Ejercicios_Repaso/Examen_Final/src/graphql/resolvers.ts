@@ -121,7 +121,7 @@ export const resolvers: IResolvers = {
         course: async(_, {idCourse} : {idCourse : string}) => {
             return courseById(idCourse);
         },
-
+        
         reviews: (_, {input} :{input: {page: number, limit: number}}) => {
             return allReviews(input.page, input.limit);
         },

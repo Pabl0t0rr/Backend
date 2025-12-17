@@ -6,6 +6,11 @@ import { studentCollection } from "../utils/utils";
 
 export const createReview = async (studentId : string ,rating : number,comment : string, courseId : string) => {
     const db = getDB();
+
+    if(rating < 0 || rating > 5){
+        throw new Error("Rating must be between 0 and 5");
+    }
+
     const review = await db.collection(reviewCollection).insertOne({
         rating : rating,
         comment : comment,

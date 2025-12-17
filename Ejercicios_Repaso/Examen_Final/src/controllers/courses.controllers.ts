@@ -54,8 +54,3 @@ export const enrolledStudentCourses = async (idStudent : string, courseId : stri
     return result;
 
 };
-
-export const avgRating = async () => {
-    const db = getDB();
-
-}
