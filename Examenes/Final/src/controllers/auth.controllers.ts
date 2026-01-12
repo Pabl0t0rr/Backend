@@ -1,0 +1,40 @@
+//Imports basics
+import jwt from "jsonwebtoken";
+import { ObjectId } from "mongodb";
+
+//Import rutas
+import { getDB } from "../db/mongo";
+import { tokenPayload } from "../types/auth";
+
+//Import utils
+import {secret, trainersCollection } from "../utils/utils";
+
+export const signToken = (userId : string) => jwt.sign({ userId }, secret as string, { expiresIn: "1h" });
+
+export const verifyToken = (token : string) : tokenPayload | null => {
+    try {
+        return jwt.verify(token as string, secret as string) as tokenPayload;
+    } catch (err) {
+        return null;
+    }
+}
+
+export const getUserToken = async (token: string) => {
+    // Primero intentamos obtener un organicer
+    const trainer = await getTrainerToken(token);
+    if (trainer) return { ...trainer};
+
+    
+    return null; // no se encontró usuario
+}
+
+export const getTrainerToken = async (token : string) => {
+    try {
+        const payload = verifyToken(token);
+        if(!payload) return null;
+        const db = getDB();
+        return await db.collection(trainersCollection).findOne({ _id: new ObjectId(payload.userId) });
+    } catch (err) {
+        return null;
+    }
+}
