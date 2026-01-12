@@ -27,7 +27,7 @@ Estructura principal del repositorio:
 
 ```bash
 ├── Ejercicio_Repaso/     ← Contenido para mejorar en diversos aspectos
-├── Parcial/              ← Resolucion del examen parcial
+├── Examenes/              ← Resolucion de los examenes(Parcial/Final)
 ├── Practicas/            ← Contenido de las practicas de la asignatura
 ├── Teoria/               ← Contenido clase (Apuntes, Ejericios)
 ├── .gitignore            ← Indica a Git qué archivos y carpetas debe ignorar     
