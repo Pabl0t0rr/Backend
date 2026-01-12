@@ -6,7 +6,7 @@
 Repositorio que agrupa todo el contenido, ejercicios y teoría de la asignatura **Arquitectura y programación de sistemas en internet**.  
 
 ![Banner](https://img.shields.io/badge/Backend-Node.js%20%7C%20TypeScript%20%7C%20Mongo_Atlas-blue?style=for-the-badge)
-![Status](https://img.shields.io/badge/Estado-En%20Desarrollo-success?style=for-the-badge)
+![Status](https://img.shields.io/badge/Estado-En%20Finalizado-red?style=for-the-badge)
 ![Purpose](https://img.shields.io/badge/Propósito-Académico-lightgrey?style=for-the-badge)
 ![GitHub repo size](https://img.shields.io/github/repo-size/Pabl0t0rr/Backend?style=for-the-badge)
 ![Last commit](https://img.shields.io/github/last-commit/Pabl0t0rr/Backend?style=for-the-badge)
